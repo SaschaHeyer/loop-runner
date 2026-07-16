@@ -32,6 +32,9 @@ runner — you just add a `loops/<name>/` folder.
 - **Connectors**: any HTTPS API becomes a data aperture via an egress proxy that injects the
   credential outside the sandbox — the agent calls the API with no auth header and never sees the
   key. See [docs/proxy.md](docs/proxy.md).
+- **Headless browser** (opt-in): a loop that must drive a real UI — click, fill, submit, read what
+  rendered — gets headless Chromium + the chrome-devtools MCP tools just by naming them in its tools.
+  See [docs/browser.md](docs/browser.md).
 
 ## Architecture on GCP
 
