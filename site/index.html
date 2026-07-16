@@ -321,11 +321,43 @@
         <!-- also in the box -->
         <div class="reveal mt-10 flex flex-wrap items-center gap-3" style="--rd:120ms">
           <span class="font-mono text-xs font-semibold uppercase tracking-[0.18em] text-ink/50">also in the box</span>
-          <span class="clay-chip bg-cream px-4 py-1.5 font-mono text-xs font-medium text-navy">headless Chromium + chrome-devtools MCP</span>
           <span class="clay-chip bg-cream px-4 py-1.5 font-mono text-xs font-medium text-navy">bundled Firestore emulator</span>
           <span class="clay-chip bg-cream px-4 py-1.5 font-mono text-xs font-medium text-navy">per-loop subagents</span>
           <span class="clay-chip bg-cream px-4 py-1.5 font-mono text-xs font-medium text-navy">external skill repos</span>
-          <span class="clay-chip bg-cream px-4 py-1.5 font-mono text-xs font-medium text-navy">transcripts + cost log → GCS</span>
+          <span class="clay-chip bg-cream px-4 py-1.5 font-mono text-xs font-medium text-navy">shared commons repos</span>
+        </div>
+      </div>
+    </section>
+
+    <!-- ============================== TRIGGERS ============================== -->
+    <section id="triggers" class="relative scroll-mt-28 px-4 py-20 sm:px-6 sm:py-28">
+      <div aria-hidden="true" class="pointer-events-none absolute -right-28 top-24 h-72 w-72 rounded-full bg-coral/20 blur-3xl"></div>
+      <div class="mx-auto max-w-6xl">
+        <div class="max-w-2xl">
+          <p class="reveal font-mono text-xs font-semibold uppercase tracking-[0.22em] text-clay-deep">start a run</p>
+          <h2 class="reveal mt-3 font-display text-4xl font-extrabold tracking-tight text-navy-deep sm:text-5xl" style="--rd:80ms">Many ways in.<br />One way through.</h2>
+          <p class="reveal mt-4 text-lg text-ink/75" style="--rd:160ms">Cron, GitHub events, a command from your terminal — every trigger lands on the same Cloud Run Job. The trigger decides <em>when</em>. The spec decides <em>what</em>. The harness guarantees the rest.</p>
+        </div>
+
+        <div class="mt-12 grid gap-6 md:grid-cols-3">
+          <div class="reveal clay flex flex-col p-7">
+            <span class="clay-chip self-start bg-sage px-3.5 py-1 font-mono text-[10px] font-bold uppercase tracking-wider text-navy-deep">schedule</span>
+            <h3 class="mt-4 font-display text-2xl font-bold text-navy-deep">While you sleep</h3>
+            <p class="mt-2 flex-1 text-[15px] leading-relaxed text-ink/75"><span class="font-mono text-sm">deploy.sh</span> provisions the Cloud Scheduler cron right next to the Job. Nightly refactors, morning digests, hourly sweeps.</p>
+            <code class="mt-5 block rounded-2xl bg-navy-deep px-4 py-3 font-mono text-[12.5px] leading-6 text-cream/95">trigger: schedule<br /><span class="text-sage">schedule: "0 3 * * *"</span></code>
+          </div>
+          <div class="reveal clay flex flex-col p-7" style="--rd:100ms">
+            <span class="clay-chip self-start bg-lav px-3.5 py-1 font-mono text-[10px] font-bold uppercase tracking-wider text-navy-deep">event</span>
+            <h3 class="mt-4 font-display text-2xl font-bold text-navy-deep">When GitHub twitches</h3>
+            <p class="mt-2 flex-1 text-[15px] leading-relaxed text-ink/75">A GitHub Action fires the Job through Workload Identity Federation — no long-lived keys. Issue labeled, PR opened, release cut.</p>
+            <code class="mt-5 block rounded-2xl bg-navy-deep px-4 py-3 font-mono text-[12.5px] leading-6 text-cream/95">trigger: event<br /><span class="text-cream/35"># Actions + WIF</span></code>
+          </div>
+          <div class="reveal clay flex flex-col p-7" style="--rd:200ms">
+            <span class="clay-chip self-start bg-coral px-3.5 py-1 font-mono text-[10px] font-bold uppercase tracking-wider text-white">manual</span>
+            <h3 class="mt-4 font-display text-2xl font-bold text-navy-deep">Whenever you say</h3>
+            <p class="mt-2 flex-1 text-[15px] leading-relaxed text-ink/75">Your terminal, a CI step, even another loop — anything that can call the Cloud Run API can pull the trigger.</p>
+            <code class="mt-5 block rounded-2xl bg-navy-deep px-4 py-3 font-mono text-[12.5px] leading-6 text-cream/95">gcloud run jobs execute<br />  loop-&lt;name&gt; <span class="text-sage">--wait</span></code>
+          </div>
         </div>
       </div>
     </section>
@@ -426,6 +458,111 @@
           <div class="reveal" style="--rd:200ms">
             <h3 class="font-display text-xl font-bold text-navy-deep">The agent never holds a key</h3>
             <p class="mt-2 text-[15px] leading-relaxed text-ink/75">Declared <span class="font-mono text-sm">connectors:</span> get credentials injected by the proxy, outside the sandbox. Least privilege by construction.</p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ============================== HEADLESS BROWSER ============================== -->
+    <section id="browser" class="relative scroll-mt-28 px-4 py-20 sm:px-6 sm:py-28">
+      <div aria-hidden="true" class="pointer-events-none absolute -left-28 top-40 h-72 w-72 rounded-full bg-sage/25 blur-3xl"></div>
+      <div class="mx-auto max-w-6xl">
+        <div class="max-w-2xl">
+          <p class="reveal font-mono text-xs font-semibold uppercase tracking-[0.22em] text-clay-deep">headless browser</p>
+          <h2 class="reveal mt-3 font-display text-4xl font-extrabold tracking-tight text-navy-deep sm:text-5xl" style="--rd:80ms">Some loops need<br />eyes and hands.</h2>
+          <p class="reveal mt-4 text-lg text-ink/75" style="--rd:160ms"><span class="font-mono text-base">curl</span> can hit an endpoint. It can't tell you the button is wired, the form actually submits, or the page threw a JavaScript error. Loops that verify a deployed UI or reproduce a browser-only bug get a real one.</p>
+        </div>
+
+        <div class="mt-12 grid items-start gap-6 lg:grid-cols-[1fr_1.15fr]">
+          <div class="space-y-7">
+            <div class="reveal">
+              <h3 class="font-display text-xl font-bold text-navy-deep">Baked into the image</h3>
+              <p class="mt-2 text-[15px] leading-relaxed text-ink/75">Headless Chromium plus Google's <a href="https://github.com/ChromeDevTools/chrome-devtools-mcp" class="font-semibold text-navy underline decoration-lav decoration-2 underline-offset-4 hover:decoration-coral">chrome-devtools MCP</a> server — <span class="font-mono text-sm">navigate_page</span>, <span class="font-mono text-sm">click</span>, <span class="font-mono text-sm">fill</span>, <span class="font-mono text-sm">take_snapshot</span>, … Nothing downloads at run time.</p>
+            </div>
+            <div class="reveal" style="--rd:80ms">
+              <h3 class="font-display text-xl font-bold text-navy-deep">Pay only if you use it</h3>
+              <p class="mt-2 text-[15px] leading-relaxed text-ink/75">Chrome launches on the first tool call. A loop that never names the tools runs byte-identical to a non-browser loop — and a browser walk is turn-expensive, so give a driving verifier roughly double the <span class="font-mono text-sm">max_turns</span>.</p>
+            </div>
+            <div class="reveal" style="--rd:160ms">
+              <h3 class="font-display text-xl font-bold text-navy-deep">One line to opt in</h3>
+              <p class="mt-2 text-[15px] leading-relaxed text-ink/75">Name the tools in the loop's <span class="font-mono text-sm">allowed_tools</span> — or in a sub-agent's <span class="font-mono text-sm">tools:</span> frontmatter. No flag, no spec field; the runner detects the intent and wires up the MCP server per run.</p>
+              <code class="mt-4 block break-words rounded-2xl bg-navy-deep px-4 py-3 font-mono text-[11.5px] leading-5 text-cream/95">allowed_tools: "Bash,Read,<span class="text-sage">mcp__chrome-devtools__navigate_page</span>,<span class="text-sage">mcp__chrome-devtools__click</span>,…"</code>
+            </div>
+          </div>
+
+          <!-- browser run console -->
+          <div class="reveal clay-navy p-5 sm:p-7" style="--rd:120ms">
+            <div class="mb-4 flex items-center gap-2">
+              <span class="h-3 w-3 rounded-full bg-coral"></span>
+              <span class="h-3 w-3 rounded-full bg-lav"></span>
+              <span class="h-3 w-3 rounded-full bg-sage"></span>
+              <span class="ml-3 font-mono text-[11px] uppercase tracking-widest text-cream/50">loop-ui-check · agent transcript</span>
+            </div>
+            <div class="space-y-1.5 font-mono text-[12.5px] leading-relaxed text-cream/90 sm:text-[13.5px]">
+              <div><span class="text-lav-soft">▸</span> navigate_page <span class="text-cream/40">https://preview.your-app.dev</span></div>
+              <div><span class="text-cream/55">&nbsp;&nbsp;· chrome launches on first tool use</span></div>
+              <div><span class="text-lav-soft">▸</span> take_snapshot <span class="text-cream/40">form#signup · 42 elements</span></div>
+              <div><span class="text-lav-soft">▸</span> fill <span class="text-cream/40">email ← canary@example.dev</span></div>
+              <div><span class="text-lav-soft">▸</span> click <span class="text-cream/40">button "Create account"</span></div>
+              <div><span class="text-lav-soft">▸</span> wait_for <span class="text-cream/40">"Welcome aboard"</span></div>
+              <div><span class="text-led">✓</span> rendered state matches the API <span class="text-cream/40">· no console errors</span></div>
+              <div class="pt-2 text-cream/40 italic">ground truth: grep the archived transcript for mcp__chrome-devtools__ calls</div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ============================== EVIDENCE / SESSION ARCHIVE ============================== -->
+    <section id="evidence" class="relative scroll-mt-28 px-4 py-20 sm:px-6 sm:py-28">
+      <div aria-hidden="true" class="pointer-events-none absolute -right-24 bottom-24 h-72 w-72 rounded-full bg-lav/25 blur-3xl"></div>
+      <div class="mx-auto max-w-6xl">
+        <div class="max-w-2xl">
+          <p class="reveal font-mono text-xs font-semibold uppercase tracking-[0.22em] text-clay-deep">the paper trail</p>
+          <h2 class="reveal mt-3 font-display text-4xl font-extrabold tracking-tight text-navy-deep sm:text-5xl" style="--rd:80ms">Don't trust the loop.<br />Read the receipts.</h2>
+          <p class="reveal mt-4 text-lg text-ink/75" style="--rd:160ms">A summary is the loop describing itself. The archive is what actually happened — every agent transcript, turn by turn, unedited, shipped to Cloud Storage at the end of every run.</p>
+        </div>
+
+        <div class="mt-12 grid items-start gap-6 lg:grid-cols-[1.15fr_1fr]">
+          <!-- archive console -->
+          <div class="reveal clay-navy order-2 p-5 sm:p-7 lg:order-1" style="--rd:120ms">
+            <div class="mb-4 flex items-center gap-2">
+              <span class="h-3 w-3 rounded-full bg-coral"></span>
+              <span class="h-3 w-3 rounded-full bg-lav"></span>
+              <span class="h-3 w-3 rounded-full bg-sage"></span>
+              <span class="ml-3 font-mono text-[11px] uppercase tracking-widest text-cream/50">gs://&lt;project&gt;-loop-sessions</span>
+            </div>
+            <div class="space-y-1.5 font-mono text-[12.5px] leading-relaxed text-cream/90 sm:text-[13.5px]">
+              <div><span class="text-lav-soft">$</span> gcloud storage ls <span class="text-cream/60">…/auto-fix/loop-auto-fix-ab12c/</span></div>
+              <div class="text-cream/60">&nbsp;&nbsp;result.json&nbsp;&nbsp;run.log&nbsp;&nbsp;session.jsonl&nbsp;&nbsp;sessions/</div>
+              <div class="pt-2"><span class="text-lav-soft">$</span> python3 loop-runner/view_session.py <span class="text-cream/60">auto-fix/loop-auto-fix-ab12c</span></div>
+              <div><span class="text-lav-soft">▸</span> maker <span class="text-cream/40">· 41 turns · $0.84 · 6m 12s</span></div>
+              <div><span class="text-cream/55">&nbsp;&nbsp;· Bash&nbsp;&nbsp;npm test → 1 failing</span></div>
+              <div><span class="text-cream/55">&nbsp;&nbsp;· Edit&nbsp;&nbsp;src/cart/total.ts</span></div>
+              <div><span class="text-cream/55">&nbsp;&nbsp;· Bash&nbsp;&nbsp;npm test → green</span></div>
+              <div><span class="text-cream/55">&nbsp;&nbsp;· Bash&nbsp;&nbsp;gh pr create → #214</span></div>
+              <div><span class="text-led">✓</span> the PR the summary claims, read back from the transcript</div>
+              <div class="pt-2 text-cream/40 italic">one bucket per project · one folder per loop · one per execution</div>
+            </div>
+          </div>
+
+          <div class="order-1 space-y-6 lg:order-2">
+            <div class="reveal">
+              <h3 class="font-mono text-base font-bold text-clay-deep">result.json</h3>
+              <p class="mt-1.5 text-[15px] leading-relaxed text-ink/75">The CLI's own exit JSON, verbatim: final result, cost, duration, tokens. <span class="font-mono text-sm">log_cost.py</span> reads it to append every run to the shared cost log.</p>
+            </div>
+            <div class="reveal" style="--rd:80ms">
+              <h3 class="font-mono text-base font-bold text-coral-deep">run.log</h3>
+              <p class="mt-1.5 text-[15px] leading-relaxed text-ink/75">The harness's narration plus your <span class="font-mono text-sm">verify.sh</span> verdict — pushed? work done? pass or fail? — without opening a single transcript.</p>
+            </div>
+            <div class="reveal" style="--rd:160ms">
+              <h3 class="font-mono text-base font-bold text-lav-deep">sessions/*.jsonl</h3>
+              <p class="mt-1.5 text-[15px] leading-relaxed text-ink/75">Every agent that ran: the maker plus each spawned sub-agent, one transcript each. If a summary claims a sub-agent did something, this is where you check.</p>
+            </div>
+            <div class="reveal" style="--rd:240ms">
+              <h3 class="font-mono text-base font-bold text-sage-deep">replay any run</h3>
+              <p class="mt-1.5 text-[15px] leading-relaxed text-ink/75"><span class="font-mono text-sm">get_run.py</span> reconnects to an execution; <span class="font-mono text-sm">view_session.py</span> renders its transcript readable. Live runs stream to Cloud Logging in real time.</p>
+            </div>
           </div>
         </div>
       </div>
@@ -589,15 +726,15 @@
 
   <!-- ============================== FOOTER ============================== -->
   <footer class="border-t-2 border-bone-deep px-4 py-10 sm:px-6">
-    <div class="mx-auto flex max-w-6xl flex-col items-center justify-between gap-4 text-center sm:flex-row sm:text-left">
-      <p class="font-mono text-xs text-ink/55">Loop Runner · Apache-2.0 · TRIGGER → EXECUTE → VERIFY → RECORD → STOP</p>
-      <div class="flex items-center gap-5 font-mono text-xs">
+    <div class="mx-auto flex max-w-6xl flex-col items-center justify-between gap-5 text-center lg:flex-row lg:text-left">
+      <p class="font-mono text-xs text-ink/55 lg:whitespace-nowrap">Loop Runner · Apache-2.0 · TRIGGER → EXECUTE → VERIFY → RECORD → STOP</p>
+      <div class="flex flex-wrap items-center justify-center gap-x-5 gap-y-2 font-mono text-xs">
         <a href="https://github.com/SaschaHeyer/loop-runner" class="text-navy underline decoration-lav underline-offset-4 hover:decoration-coral">github</a>
         <a href="https://github.com/SaschaHeyer/loop-runner/blob/main/loop-runner/get-started.md" class="text-navy underline decoration-lav underline-offset-4 hover:decoration-coral">get-started</a>
         <a href="https://github.com/SaschaHeyer/loop-runner/blob/main/docs/proxy.md" class="text-navy underline decoration-lav underline-offset-4 hover:decoration-coral">connectors</a>
         <a href="https://github.com/SaschaHeyer/loop-runner/blob/main/docs/browser.md" class="text-navy underline decoration-lav underline-offset-4 hover:decoration-coral">browser</a>
       </div>
-      <p class="font-mono text-xs text-ink/55">sculpted with Claude Code ✦</p>
+      <p class="font-mono text-xs text-ink/55 lg:whitespace-nowrap">crafted by <a href="https://www.linkedin.com/in/saschaheyer/" class="font-semibold text-navy underline decoration-lav underline-offset-4 transition hover:decoration-coral">Sascha Heyer</a> · sculpted with Claude Code ✦</p>
     </div>
   </footer>
 
