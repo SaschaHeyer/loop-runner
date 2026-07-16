@@ -6,12 +6,27 @@ committed, so the folder deploys to any static host as-is.
 
 ```
 site/
-├── index.html      the page (all sections, inline SVG art)
-├── main.js         copy buttons · scroll reveals · terminal typewriter
+├── index.html      the page (all sections, inline SVG art, social meta + JSON-LD)
+├── main.js         copy buttons · mobile menu · scroll reveals · terminal typewriter
 ├── tailwind.css    Tailwind v4 source: @theme palette, keyframes, clay components
+├── og.html         source card for the social-share image
+├── assets/og.png   1200×630 Open Graph image (committed)
 ├── dist/style.css  built output (committed — keep in sync)
 └── package.json    build scripts
 ```
+
+## Social sharing
+
+`index.html` carries the full set: canonical URL, Open Graph (LinkedIn reads these),
+Twitter card, and schema.org JSON-LD (`WebSite` + `SoftwareApplication` + `Person`).
+All absolute URLs point at `https://looprunner.dev/` — one find-and-replace in
+`index.html` if the domain changes.
+
+To regenerate the share image after a design change: serve the folder, open
+`og.html` in a 1200×630 browser viewport, screenshot to `assets/og.png` (downscale
+to exactly 1200×630 if captured at 2x, e.g. `sips -z 630 1200 assets/og.png`).
+Preview how platforms render it with LinkedIn's Post Inspector
+(linkedin.com/post-inspector) once deployed.
 
 ## Develop
 

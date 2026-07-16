@@ -5,9 +5,70 @@
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <title>Loop Runner — run any agentic loop headless</title>
   <meta name="description" content="A task-agnostic harness that runs agentic loops headless in a Cloud Run Job — with guaranteed commit → push → verify → record. Skill-first: npx skills add SaschaHeyer/loop-runner." />
-  <meta property="og:title" content="Loop Runner — run any agentic loop headless" />
-  <meta property="og:description" content="TRIGGER → EXECUTE → VERIFY → RECORD → STOP. The agent forgets; the repo doesn't." />
+  <meta name="author" content="Sascha Heyer" />
+  <meta name="theme-color" content="#f4edde" />
+
+  <!-- canonical + social sharing — update the domain here if it ever changes -->
+  <link rel="canonical" href="https://looprunner.dev/" />
   <meta property="og:type" content="website" />
+  <meta property="og:url" content="https://looprunner.dev/" />
+  <meta property="og:site_name" content="Loop Runner" />
+  <meta property="og:locale" content="en_US" />
+  <meta property="og:title" content="Loop Runner — run any agentic loop headless" />
+  <meta property="og:description" content="TRIGGER → EXECUTE → VERIFY → RECORD → STOP. The agent forgets; the repo doesn't. Skill-first: npx skills add SaschaHeyer/loop-runner." />
+  <meta property="og:image" content="https://looprunner.dev/assets/og.png" />
+  <meta property="og:image:type" content="image/png" />
+  <meta property="og:image:width" content="1200" />
+  <meta property="og:image:height" content="630" />
+  <meta property="og:image:alt" content="Loop Runner in chunky clay letters beside a round clay mascot with headphones, the TRIGGER → EXECUTE → VERIFY → RECORD → STOP lifecycle, and the command npx skills add SaschaHeyer/loop-runner." />
+  <meta name="twitter:card" content="summary_large_image" />
+  <meta name="twitter:title" content="Loop Runner — run any agentic loop headless" />
+  <meta name="twitter:description" content="TRIGGER → EXECUTE → VERIFY → RECORD → STOP. The agent forgets; the repo doesn't." />
+  <meta name="twitter:image" content="https://looprunner.dev/assets/og.png" />
+  <meta name="twitter:image:alt" content="Loop Runner — clay letters, mascot, lifecycle chips, and the npx skills add install command." />
+
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@graph": [
+      {
+        "@type": "WebSite",
+        "@id": "https://looprunner.dev/#website",
+        "url": "https://looprunner.dev/",
+        "name": "Loop Runner",
+        "publisher": { "@id": "https://looprunner.dev/#sascha" }
+      },
+      {
+        "@type": "SoftwareApplication",
+        "@id": "https://looprunner.dev/#app",
+        "name": "Loop Runner",
+        "url": "https://looprunner.dev/",
+        "image": "https://looprunner.dev/assets/og.png",
+        "description": "A task-agnostic harness that runs agentic loops (Claude Code) headless in Google Cloud Run Jobs — with guaranteed commit → push → verify → record before every run exits.",
+        "applicationCategory": "DeveloperApplication",
+        "operatingSystem": "Google Cloud Run Jobs",
+        "license": "https://www.apache.org/licenses/LICENSE-2.0",
+        "isAccessibleForFree": true,
+        "offers": { "@type": "Offer", "price": "0", "priceCurrency": "USD" },
+        "downloadUrl": "https://github.com/SaschaHeyer/loop-runner",
+        "softwareHelp": { "@type": "CreativeWork", "url": "https://github.com/SaschaHeyer/loop-runner#readme" },
+        "sameAs": ["https://github.com/SaschaHeyer/loop-runner"],
+        "keywords": "agentic loops, headless agents, Claude Code, Cloud Run Jobs, AI automation, agent skills",
+        "author": { "@id": "https://looprunner.dev/#sascha" }
+      },
+      {
+        "@type": "Person",
+        "@id": "https://looprunner.dev/#sascha",
+        "name": "Sascha Heyer",
+        "url": "https://www.linkedin.com/in/saschaheyer/",
+        "sameAs": [
+          "https://www.linkedin.com/in/saschaheyer/",
+          "https://github.com/SaschaHeyer"
+        ]
+      }
+    ]
+  }
+  </script>
   <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' rx='16' fill='%23f4edde'/%3E%3Cpath d='M32 12a20 20 0 1 1-14.1 5.9' fill='none' stroke='%23b96a50' stroke-width='9' stroke-linecap='round'/%3E%3Cpath d='M10 22 L20 14 L22 27 Z' fill='%23b96a50'/%3E%3Ccircle cx='32' cy='32' r='6' fill='%2343d97d'/%3E%3C/svg%3E" />
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
