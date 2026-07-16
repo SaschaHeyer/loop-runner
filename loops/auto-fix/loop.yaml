@@ -1,0 +1,31 @@
+# loops/auto-fix/loop.yaml — the AEGIS bug-fix loop (maker + verifier).
+# Two-Repo Mode: the SPEC lives here in loop-runner (read-only library); the agent operates on and
+# opens a PR against the AEGIS app. Deploy + run:
+#   cd loop-runner && LOOP=auto-fix BUILD=0 ./deploy.sh
+#   gcloud run jobs execute loop-auto-fix --region=us-central1 --project=<project>
+name: auto-fix
+description: >
+  Find the failing test in the AEGIS app, fix its root cause in the source (never the test), prove
+  npm test is green, and open a pull request. Done = a PR whose branch passes the suite.
+
+runtime: loop-runner
+trigger: manual               # fire it by hand (or an issue-labeled event); no cron
+
+model: claude-sonnet-4-6      # a mechanical fix, the cheap model
+max_turns: 50                 # STOP: find + fix + prove + PR needs headroom
+budget_usd: 5                 # STOP: advisory cost cap
+
+repo: SaschaHeyer/loop-demo   # Two-Repo Mode: agent works + PRs HERE; the library stays read-only
+prompt: loops/auto-fix/prompt.md
+verify: loops/auto-fix/verify.sh
+allowed_tools: "Bash,Read,Write,Edit,Glob,Grep"
+
+skills: []
+connectors: []                # github is always injected (git + gh); the npm registry needs no auth
+memory: loops/auto-fix/state
+push: pr                      # propose a fix, NEVER land on main
+
+git_user_name: auto-fix loop
+git_user_email: loop@example.com
+
+tier: "3 · ground-truth (npm test green, and the fix is in the source, not the test)"
