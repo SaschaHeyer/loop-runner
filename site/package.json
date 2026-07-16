@@ -1,0 +1,14 @@
+{
+  "name": "loop-runner-site",
+  "private": true,
+  "description": "Landing page for Loop Runner — run agentic loops headless",
+  "scripts": {
+    "build": "tailwindcss -i ./tailwind.css -o ./dist/style.css --minify",
+    "watch": "tailwindcss -i ./tailwind.css -o ./dist/style.css --watch",
+    "serve": "python3 -m http.server 4173"
+  },
+  "devDependencies": {
+    "@tailwindcss/cli": "^4.1.11",
+    "tailwindcss": "^4.1.11"
+  }
+}

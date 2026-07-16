@@ -1,0 +1,38 @@
+# loops/issue-fix/loop.yaml — the GitHub issue-fixer (the landing-page recipe, complete).
+# Label an issue `agent-ready` in the WORK repo and its GitHub Action fires this Job via
+# Workload Identity Federation — copy github-trigger.example.yml into that repo. Deploy:
+#   cd loop-runner && LOOP=issue-fix BUILD=0 ./deploy.sh
+name: issue-fix
+description: >
+  Pick the newest open issue labeled agent-ready in the work repo, reproduce it, fix the root
+  cause in the source (never the tests), prove the suite green, and open a PR that closes it.
+  Done = an open PR on branch issue-fix/<number> whose branch passes the suite. No matching
+  issue = say so and stop.
+
+runtime: loop-runner
+trigger: manual               # fired by the work repo's GitHub Action on issues opened/labeled
+                              # (see github-trigger.example.yml); no cron
+
+model: claude-sonnet-4-6      # mechanical fix work — the cheap model
+max_turns: 60                 # STOP: pick + reproduce + fix + prove + PR needs headroom
+budget_usd: 5                 # STOP: advisory per-run cost cap
+
+repo: your-org/your-app       # Two-Repo Mode: the agent works + opens the PR HERE — set me!
+prompt: loops/issue-fix/prompt.md
+verify: loops/issue-fix/verify.sh
+allowed_tools: "Bash,Read,Write,Edit,Glob,Grep"
+
+skills: []
+connectors: []                # github (git + gh) is built in; nothing else needed
+
+# DECISION: no state ledger — in Two-Repo Mode the work repo is the loop's memory, so the
+# dedupe ledger is GitHub itself: one branch per issue (issue-fix/<n>). A rerun sees the
+# branch (or its open PR) and skips that issue. The dir stays as the conventional memory slot.
+memory: loops/issue-fix/state
+push: pr                      # propose, NEVER land on main — auto-merge is your branch
+                              # protection ruleset's call, not the loop's
+
+git_user_name: issue-fix loop
+git_user_email: loop@example.com
+
+tier: "3 · ground-truth (open PR read back via gh, branch named for the issue, suite green)"

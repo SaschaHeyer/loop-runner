@@ -1,0 +1,85 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <title>Loop Runner — OG card source (render at 1200×630 → assets/og.png)</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Baloo+2:wght@600;700;800&family=DM+Sans:ital,wght@0,400;0,500;0,700;1,400&family=JetBrains+Mono:wght@400;600;700&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="dist/style.css" />
+  <style>
+    html { overflow: hidden; }
+    body { width: 1200px; height: 630px; overflow: hidden; }
+    /* freeze every animation at its initial frame for a deterministic capture */
+    *, *::before, *::after { animation: none !important; }
+  </style>
+</head>
+<body class="antialiased">
+  <svg width="0" height="0" class="absolute" aria-hidden="true" focusable="false">
+    <defs>
+      <radialGradient id="clayGrad" cx="0.38" cy="0.26" r="0.95">
+        <stop offset="0" stop-color="#d18a6b"/><stop offset=".55" stop-color="#b96a50"/><stop offset="1" stop-color="#9d5540"/>
+      </radialGradient>
+    </defs>
+  </svg>
+
+  <div class="relative flex h-[630px] w-[1200px] flex-col justify-between overflow-hidden p-16">
+    <div aria-hidden="true" class="pointer-events-none absolute -right-20 -top-24 h-80 w-80 rounded-full bg-lav/30 blur-3xl"></div>
+    <div aria-hidden="true" class="pointer-events-none absolute -bottom-28 -left-24 h-80 w-80 rounded-full bg-coral/25 blur-3xl"></div>
+
+    <!-- top row -->
+    <div class="relative flex items-center justify-between">
+      <div class="flex items-center gap-3">
+        <svg viewBox="0 0 64 64" class="h-12 w-12" aria-hidden="true">
+          <path d="M32 12a20 20 0 1 1-14.1 5.9" fill="none" stroke="#b96a50" stroke-width="9" stroke-linecap="round"/>
+          <path d="M10 22 L20 14 L22 27 Z" fill="#b96a50"/>
+          <circle cx="32" cy="32" r="6" fill="#43d97d"/>
+        </svg>
+        <span class="font-display text-3xl font-bold tracking-tight text-navy-deep">Loop&nbsp;Runner</span>
+      </div>
+      <span class="font-mono text-base text-ink/50">github.com/SaschaHeyer/loop-runner</span>
+    </div>
+
+    <!-- middle: letters + mascot -->
+    <div class="relative flex items-center justify-between">
+      <div>
+        <h1 class="clay-letters text-[128px]">
+          <span class="block leading-[0.92]">
+            <span style="--c:#f2e8d0; --tilt:-2.5deg">L</span><span style="--c:#afa3df; --tilt:1.6deg">O</span><span style="--c:#b96a50; --tilt:-1.4deg">O</span><span style="--c:#2a3760; --tilt:2.2deg">P</span>
+          </span>
+          <span class="block leading-[0.92]">
+            <span style="--c:#ef7d5e; --tilt:1.8deg">R</span><span style="--c:#afa3df; --tilt:-2deg">U</span><span style="--c:#f2e8d0; --tilt:1.2deg">N</span><span style="--c:#9cb89b; --tilt:-1.6deg">N</span><span style="--c:#b96a50; --tilt:2.4deg">E</span><span style="--c:#2a3760; --tilt:-2.2deg">R</span>
+          </span>
+        </h1>
+        <p class="mt-6 max-w-xl text-2xl leading-snug text-ink/80">Run any agentic loop <strong class="text-navy">headless</strong> in a Cloud Run Job.</p>
+      </div>
+      <svg viewBox="0 0 200 118" class="mr-6 w-72 rotate-3" aria-hidden="true">
+        <path d="M100 22 C 130 22 148 44 150 74 C 152 102 144 118 100 118 C 56 118 48 102 50 74 C 52 44 70 22 100 22 Z" fill="url(#clayGrad)"/>
+        <ellipse cx="84" cy="38" rx="16" ry="7" fill="#ffffff" opacity="0.22" transform="rotate(-14 84 38)"/>
+        <circle cx="76" cy="74" r="7" fill="#b5a7e2"/><circle cx="124" cy="74" r="7" fill="#b5a7e2"/>
+        <circle cx="87" cy="61" r="5" fill="#33302b"/><circle cx="113" cy="61" r="5" fill="#33302b"/>
+        <path d="M92 70 Q 100 78 108 70" fill="none" stroke="#33302b" stroke-width="3.5" stroke-linecap="round"/>
+        <path d="M60 48 C 68 12 132 12 140 48" fill="none" stroke="#9cb89b" stroke-width="12" stroke-linecap="round"/>
+        <ellipse cx="57" cy="58" rx="12" ry="17" fill="#9cb89b" transform="rotate(-8 57 58)"/>
+        <ellipse cx="57" cy="58" rx="6" ry="10" fill="#7fa381" transform="rotate(-8 57 58)"/>
+        <ellipse cx="143" cy="58" rx="12" ry="17" fill="#9cb89b" transform="rotate(8 143 58)"/>
+        <ellipse cx="143" cy="58" rx="6" ry="10" fill="#7fa381" transform="rotate(8 143 58)"/>
+        <circle cx="100" cy="100" r="9" fill="#7fa381"/>
+        <circle cx="100" cy="100" r="5" fill="#43d97d"/>
+      </svg>
+    </div>
+
+    <!-- bottom: mantra + command -->
+    <div class="relative flex items-center justify-between gap-6">
+      <div class="flex items-center gap-3 font-display text-lg font-bold">
+        <span class="clay-chip bg-cream px-4 py-1.5 text-navy">TRIGGER</span><span class="text-navy/50">→</span>
+        <span class="clay-chip bg-coral px-4 py-1.5 text-white">EXECUTE</span><span class="text-navy/50">→</span>
+        <span class="clay-chip bg-sage px-4 py-1.5 text-navy-deep">VERIFY</span><span class="text-navy/50">→</span>
+        <span class="clay-chip bg-navy px-4 py-1.5 text-cream">RECORD</span><span class="text-navy/50">→</span>
+        <span class="clay-chip bg-clay px-4 py-1.5 text-cream">STOP</span>
+      </div>
+      <code class="flex items-center gap-3 rounded-full bg-navy-deep py-4 pl-6 pr-7 font-mono text-lg font-semibold text-cream"><span class="text-coral">$</span> npx skills add SaschaHeyer/loop-runner</code>
+    </div>
+  </div>
+</body>
+</html>
