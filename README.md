@@ -133,6 +133,8 @@ loop-runner/     the engine — entrypoint, deploy, spec parser, proxy, hooks, c
 loops/
   _template/     scaffold for a new loop
   hello-world/   a runnable canary loop
+  auto-fix/      bug-fix loop — failing test → root-cause fix → PR (Two-Repo Mode)
+  issue-fix/     the GitHub issue-fixer — label an issue `agent-ready`, wake up to a PR
 skills/
   loop-new/      interview-driven authoring skill for new loops
 .claude/skills/

@@ -719,7 +719,7 @@
 <span class="text-lav-soft">allowed_tools:</span> <span class="text-sage">"Bash,Read,Write,Edit,Glob,Grep"</span>
 
 <span class="text-lav-soft">connectors:</span> []           <span class="text-cream/35"># github is built in</span>
-<span class="text-lav-soft">memory:</span> loops/issue-fix/state
+<span class="text-lav-soft">memory:</span> loops/issue-fix/state <span class="text-cream/35"># dedupe = one branch per issue</span>
 <span class="text-lav-soft">push:</span> <span class="text-sage">pr</span>                 <span class="text-cream/35"># propose, never land</span></code></pre>
           </div>
 
@@ -747,8 +747,14 @@
             <ul class="reveal space-y-2.5 text-[15px] leading-relaxed text-ink/75" style="--rd:180ms">
               <li class="flex gap-3"><span class="mt-0.5 shrink-0 font-mono text-sage-deep">✓</span><span>The <span class="font-mono text-sm">agent-ready</span> label is the gate — a human opts each issue in.</span></li>
               <li class="flex gap-3"><span class="mt-0.5 shrink-0 font-mono text-sage-deep">✓</span><span><span class="font-mono text-sm">push: pr</span> means it can never land on main alone — auto-merge is your branch protection's call.</span></li>
-              <li class="flex gap-3"><span class="mt-0.5 shrink-0 font-mono text-sage-deep">✓</span><span>The <span class="font-mono text-sm">memory:</span> ledger is why run #47 doesn't re-fix issue #3.</span></li>
+              <li class="flex gap-3"><span class="mt-0.5 shrink-0 font-mono text-sage-deep">✓</span><span>One branch per issue (<span class="font-mono text-sm">issue-fix/123</span>) is the dedupe ledger — a rerun sees it and skips.</span></li>
             </ul>
+
+            <!-- the full recipe in the repo -->
+            <a href="https://github.com/SaschaHeyer/loop-runner/tree/main/loops/issue-fix" class="reveal btn-clay flex items-center justify-between gap-3 bg-navy px-5 py-3.5 text-cream" style="--rd:220ms">
+              <span class="text-[15px]">Get the complete loop — <span class="font-mono text-sm">prompt.md</span> + <span class="font-mono text-sm">verify.sh</span> + trigger, ready to deploy</span>
+              <span aria-hidden="true" class="shrink-0 font-display text-lg">→</span>
+            </a>
 
             <!-- coming up -->
             <div class="reveal flex flex-wrap items-center gap-2.5" style="--rd:260ms">

@@ -1,0 +1,26 @@
+# Copy this file to .github/workflows/issue-fix.yml in the WORK repo (the `repo:` in loop.yaml).
+# It fires the Cloud Run Job whenever an issue is opened with — or labeled — `agent-ready`,
+# authenticating through Workload Identity Federation: no GCP keys stored in GitHub.
+#
+# One-time GCP setup (details: github.com/google-github-actions/auth#setup):
+#   1. Create a Workload Identity Pool + Provider trusted for this GitHub repo.
+#   2. Let the provider principal impersonate the runner service account, and grant that
+#      service account roles/run.invoker on the loop-issue-fix Job.
+name: issue-fix
+on:
+  issues:
+    types: [opened, labeled]
+permissions:
+  id-token: write        # mint the OIDC token WIF exchanges — no stored secrets
+  contents: read
+jobs:
+  fire:
+    if: contains(github.event.issue.labels.*.name, 'agent-ready')
+    runs-on: ubuntu-latest
+    steps:
+      - uses: google-github-actions/auth@v2
+        with:
+          workload_identity_provider: projects/<project-number>/locations/global/workloadIdentityPools/<pool>/providers/<provider>
+          service_account: loop-runner@<your-project>.iam.gserviceaccount.com
+      - uses: google-github-actions/setup-gcloud@v2
+      - run: gcloud run jobs execute loop-issue-fix --region=us-central1 --project=<your-project>
