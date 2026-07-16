@@ -68,7 +68,7 @@ if (term) {
     { html: '<span class="text-lav-soft">▸</span> agent up <span class="text-cream/35">· claude on vertex · max_turns=6 · budget $1</span>', d: 650 },
     { html: '<span class="text-cream/55">&nbsp;&nbsp;· reads loops/hello-world/state/greetings.md</span>', d: 750 },
     { html: '<span class="text-cream/55">&nbsp;&nbsp;· appends one timestamped greeting</span>', d: 650 },
-    { html: '<span class="text-led">✓</span> verify.sh → exit 0 <span class="text-cream/35">(tier 3 · ground-truth)</span>', d: 850 },
+    { html: '<span class="text-led">✓</span> verify.sh → exit 0 <span class="text-cream/35">(a real check, not a self-grade)</span>', d: 850 },
     { html: '<span class="text-led">✓</span> stop hook · commit + push <span class="text-cream/35">(the persistence guarantee)</span>', d: 700 },
     { html: '<span class="font-bold text-led">work_done=1 pushed=true</span>', d: 800 },
     { html: '<span class="text-led">✓</span> transcript + cost → gs://…/sessions/', d: 650 },

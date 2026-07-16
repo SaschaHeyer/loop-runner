@@ -301,8 +301,8 @@
               <h3 class="font-display text-[22px] font-bold leading-snug text-navy-deep">"Trust me, it worked"</h3>
               <span class="clay-chip shrink-0 bg-sage px-3 py-1 font-mono text-[10px] font-bold uppercase tracking-wider text-navy-deep">solved</span>
             </div>
-            <p class="mt-2 text-[15px] leading-relaxed text-ink/75">A model grading its own homework isn't verification. <span class="font-mono text-sm">verify.sh</span> <strong class="text-navy">runs in the harness, outside the agent</strong> — and every loop declares an honest tier: ground-truth readback beats self-judging.</p>
-            <p class="mt-4 font-mono text-xs text-sage-deep">✓ tier: 3 · ground-truth (exit 0 = pass)</p>
+            <p class="mt-2 text-[15px] leading-relaxed text-ink/75">A model grading its own homework isn't verification. <span class="font-mono text-sm">verify.sh</span> <strong class="text-navy">runs in the harness, outside the agent</strong> — a check that reads back ground truth, not the model's own summary.</p>
+            <p class="mt-4 font-mono text-xs text-sage-deep">✓ verify.sh → exit 0 = pass, anything else = fail</p>
           </div>
           <div class="reveal clay p-7" style="--rd:200ms">
             <div class="flex items-start justify-between gap-4">
@@ -614,8 +614,7 @@
 <span class="text-lav-soft">verify:</span> loops/nightly-refactor/verify.sh
 <span class="text-lav-soft">connectors:</span> []              <span class="text-cream/35"># least privilege</span>
 <span class="text-lav-soft">memory:</span> loops/nightly-refactor/state
-<span class="text-lav-soft">push:</span> <span class="text-sage">pr</span>                    <span class="text-cream/35"># propose, never land</span>
-<span class="text-lav-soft">tier:</span> <span class="text-sage">"3 · ground-truth"</span>    <span class="text-cream/35"># be honest</span></code></pre>
+<span class="text-lav-soft">push:</span> <span class="text-sage">pr</span>                    <span class="text-cream/35"># propose, never land</span></code></pre>
           </div>
         </div>
       </div>
@@ -633,7 +632,7 @@
           <article class="reveal clay flex flex-col p-7">
             <div class="flex items-center justify-between">
               <h3 class="font-mono text-lg font-bold text-navy-deep">hello-world</h3>
-              <span class="clay-chip bg-sage px-3 py-1 font-mono text-[10px] font-bold uppercase tracking-wider text-navy-deep">tier 3</span>
+              <span class="clay-chip bg-sage px-3 py-1 font-mono text-[10px] font-bold uppercase tracking-wider text-navy-deep">verified</span>
             </div>
             <p class="mt-3 flex-1 text-[15px] leading-relaxed text-ink/75">The canary. Appends one timestamped greeting to its own state file — and proves the whole spine: clone → model → task → verify → commit → push.</p>
             <div class="mt-5 flex flex-wrap gap-2 font-mono text-[11px] text-ink/60">
@@ -645,7 +644,7 @@
           <article class="reveal clay flex flex-col p-7" style="--rd:100ms">
             <div class="flex items-center justify-between">
               <h3 class="font-mono text-lg font-bold text-navy-deep">auto-fix</h3>
-              <span class="clay-chip bg-sage px-3 py-1 font-mono text-[10px] font-bold uppercase tracking-wider text-navy-deep">tier 3</span>
+              <span class="clay-chip bg-sage px-3 py-1 font-mono text-[10px] font-bold uppercase tracking-wider text-navy-deep">verified</span>
             </div>
             <p class="mt-3 flex-1 text-[15px] leading-relaxed text-ink/75">Finds the failing test in a work repo, fixes the root cause in the source — never the test — proves <span class="font-mono text-sm">npm test</span> green, and opens the PR.</p>
             <div class="mt-5 flex flex-wrap gap-2 font-mono text-[11px] text-ink/60">
@@ -657,7 +656,7 @@
           <article class="reveal flex flex-col rounded-[1.75rem] border-[3px] border-dashed border-clay/50 bg-cream/40 p-7" style="--rd:200ms">
             <div class="flex items-center justify-between">
               <h3 class="font-mono text-lg font-bold text-clay-deep">your-loop</h3>
-              <span class="rounded-full border-2 border-dashed border-clay/50 px-3 py-1 font-mono text-[10px] font-bold uppercase tracking-wider text-clay-deep">tier ?</span>
+              <span class="rounded-full border-2 border-dashed border-clay/50 px-3 py-1 font-mono text-[10px] font-bold uppercase tracking-wider text-clay-deep">yours</span>
             </div>
             <p class="mt-3 flex-1 text-[15px] leading-relaxed text-ink/75">A ticket triager. An error sweep. A Slack-digest bot. An engineer that drains a backlog overnight. Any workflow with a real check and a stopping condition.</p>
             <code class="mt-5 block rounded-2xl bg-navy-deep px-4 py-3 font-mono text-[12.5px] text-cream/95">./new-loop.sh my-loop</code>
@@ -671,7 +670,7 @@
             <ul class="space-y-3 text-[15px] leading-relaxed text-cream/85">
               <li class="flex gap-3"><span class="mt-1 shrink-0 text-sage" aria-hidden="true">▸</span><span>Runs on <strong class="text-cream">Google Cloud</strong> (Cloud Run Jobs + Scheduler) with <strong class="text-cream">Claude on Vertex AI</strong>. That's the supported runtime today — it isn't cloud-agnostic yet.</span></li>
               <li class="flex gap-3"><span class="mt-1 shrink-0 text-sage" aria-hidden="true">▸</span><span>A fresh GCP project enables the Claude models in Vertex Model Garden once (accept the EULA).</span></li>
-              <li class="flex gap-3"><span class="mt-1 shrink-0 text-sage" aria-hidden="true">▸</span><span>Verifier tiers are declared honestly per loop — a check that reads back ground truth beats a model grading its own work. Say which one you have.</span></li>
+              <li class="flex gap-3"><span class="mt-1 shrink-0 text-sage" aria-hidden="true">▸</span><span>Every loop declares its verification honestly — a check that reads back ground truth beats a model grading its own work. Say which one you have.</span></li>
             </ul>
           </div>
         </div>
