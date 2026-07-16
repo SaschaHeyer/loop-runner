@@ -21,6 +21,24 @@ for (const btn of document.querySelectorAll("[data-copy]")) {
   });
 }
 
+/* ---------- mobile menu ---------- */
+const menuBtn = document.getElementById("menu-btn");
+const menu = document.getElementById("mobile-menu");
+if (menuBtn && menu) {
+  const setOpen = (open) => {
+    menu.classList.toggle("hidden", !open);
+    menuBtn.setAttribute("aria-expanded", String(open));
+  };
+  menuBtn.addEventListener("click", () => setOpen(menu.classList.contains("hidden")));
+  menu.querySelectorAll("a").forEach((a) => a.addEventListener("click", () => setOpen(false)));
+  document.addEventListener("keydown", (e) => {
+    if (e.key === "Escape") setOpen(false);
+  });
+  document.addEventListener("click", (e) => {
+    if (!menu.classList.contains("hidden") && !menu.contains(e.target) && !menuBtn.contains(e.target)) setOpen(false);
+  });
+}
+
 /* ---------- scroll reveals ---------- */
 const revealables = document.querySelectorAll(".reveal");
 if ("IntersectionObserver" in window && !reduced) {
