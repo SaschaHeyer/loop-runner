@@ -4,10 +4,13 @@ document.documentElement.classList.add("js");
 const reduced = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
 
 /* ---------- copy buttons ---------- */
-for (const btn of document.querySelectorAll("[data-copy]")) {
+for (const btn of document.querySelectorAll("[data-copy], [data-copy-from]")) {
   btn.addEventListener("click", async () => {
     try {
-      await navigator.clipboard.writeText(btn.dataset.copy);
+      const text = btn.dataset.copyFrom
+        ? document.querySelector(btn.dataset.copyFrom)?.innerText ?? ""
+        : btn.dataset.copy;
+      await navigator.clipboard.writeText(text);
       const label = btn.textContent;
       btn.textContent = "copied ✓";
       btn.disabled = true;
@@ -20,6 +23,28 @@ for (const btn of document.querySelectorAll("[data-copy]")) {
     }
   });
 }
+
+/* ---------- live GitHub stats (freshness badge; stays hidden on failure) ---------- */
+(async () => {
+  try {
+    const r = await fetch("https://api.github.com/repos/SaschaHeyer/loop-runner");
+    if (!r.ok) return;
+    const d = await r.json();
+    const stars = document.getElementById("gh-stars");
+    if (stars && typeof d.stargazers_count === "number" && d.stargazers_count > 0) {
+      const n = d.stargazers_count;
+      stars.textContent = "★ " + (n >= 1000 ? (n / 1000).toFixed(1).replace(/\.0$/, "") + "k" : n);
+      stars.classList.remove("hidden");
+    }
+    const upd = document.getElementById("gh-updated");
+    if (upd && d.pushed_at) {
+      const days = Math.max(0, Math.floor((Date.now() - new Date(d.pushed_at)) / 86400000));
+      upd.textContent = days === 0 ? "· pushed today" : days === 1 ? "· pushed yesterday" : `· pushed ${days} days ago`;
+    }
+  } catch {
+    /* offline or rate-limited — badges simply don't appear */
+  }
+})();
 
 /* ---------- mobile menu ---------- */
 const menuBtn = document.getElementById("menu-btn");

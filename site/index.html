@@ -101,11 +101,13 @@
         <a href="#guarantees" class="transition hover:text-clay">Guarantees</a>
         <a href="#how" class="transition hover:text-clay">How it works</a>
         <a href="#loops" class="transition hover:text-clay">Loops</a>
+        <a href="#recipes" class="transition hover:text-clay">Recipes</a>
       </div>
       <div class="flex items-center gap-2">
         <a href="https://github.com/SaschaHeyer/loop-runner" class="btn-clay flex items-center gap-2 bg-navy px-4 py-2 text-sm text-cream">
           <svg viewBox="0 0 16 16" class="h-4 w-4 fill-current" aria-hidden="true"><path d="M8 0C3.58 0 0 3.58 0 8c0 3.54 2.29 6.53 5.47 7.59.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82.64-.18 1.32-.27 2-.27s1.36.09 2 .27c1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A8.01 8.01 0 0 0 16 8c0-4.42-3.58-8-8-8Z"/></svg>
           <span class="hidden sm:inline">GitHub</span>
+          <span id="gh-stars" class="hidden rounded-full bg-cream/15 px-2 py-0.5 font-mono text-[11px] font-semibold"></span>
         </a>
         <button id="menu-btn" type="button" class="clay-chip flex h-10 w-10 items-center justify-center bg-lav md:hidden" aria-expanded="false" aria-controls="mobile-menu" aria-label="Toggle menu">
           <span class="burger flex flex-col items-center justify-center gap-[5px]" aria-hidden="true">
@@ -120,7 +122,8 @@
       <a href="#skill" class="block border-b-2 border-dashed border-bone-deep py-3 font-display text-lg font-bold text-navy">Install</a>
       <a href="#guarantees" class="block border-b-2 border-dashed border-bone-deep py-3 font-display text-lg font-bold text-navy">Guarantees</a>
       <a href="#how" class="block border-b-2 border-dashed border-bone-deep py-3 font-display text-lg font-bold text-navy">How it works</a>
-      <a href="#loops" class="block py-3 font-display text-lg font-bold text-navy">Loops</a>
+      <a href="#loops" class="block border-b-2 border-dashed border-bone-deep py-3 font-display text-lg font-bold text-navy">Loops</a>
+      <a href="#recipes" class="block py-3 font-display text-lg font-bold text-navy">Recipes</a>
     </div>
   </header>
 
@@ -677,6 +680,88 @@
       </div>
     </section>
 
+    <!-- ============================== RECIPES ============================== -->
+    <section id="recipes" class="relative scroll-mt-28 px-4 py-20 sm:px-6 sm:py-28">
+      <div aria-hidden="true" class="pointer-events-none absolute -left-24 top-32 h-72 w-72 rounded-full bg-coral/20 blur-3xl"></div>
+      <div class="mx-auto max-w-6xl">
+        <div class="max-w-2xl">
+          <p class="reveal font-mono text-xs font-semibold uppercase tracking-[0.22em] text-clay-deep">recipes</p>
+          <h2 class="reveal mt-3 font-display text-4xl font-extrabold tracking-tight text-navy-deep sm:text-5xl" style="--rd:80ms">Steal this loop.</h2>
+          <p class="reveal mt-4 text-lg text-ink/75" style="--rd:160ms">Copy-paste starting points for real loops. First up: the <strong class="text-navy">GitHub issue-fixer</strong> — label an issue before you leave, review the PR over coffee.</p>
+        </div>
+
+        <div class="mt-12 grid items-start gap-6 lg:grid-cols-[1.15fr_1fr]">
+          <!-- the spec -->
+          <div class="reveal clay-navy p-5 sm:p-7">
+            <div class="mb-4 flex items-center justify-between gap-3">
+              <span class="min-w-0 truncate font-mono text-[11px] uppercase tracking-widest text-cream/50">loops/issue-fix/loop.yaml</span>
+              <button type="button" data-copy-from="#recipe-yaml" class="shrink-0 rounded-lg bg-cream/10 px-2.5 py-1.5 font-mono text-[11px] font-semibold text-cream transition hover:bg-cream/20" aria-label="Copy loop.yaml">copy</button>
+            </div>
+            <pre class="overflow-x-auto font-mono text-[12.5px] leading-6 text-cream/90 sm:text-[13px]"><code id="recipe-yaml"><span class="text-cream/35"># fix new GitHub issues while you sleep</span>
+<span class="text-lav-soft">name:</span> issue-fix
+<span class="text-lav-soft">description:</span> >
+  Pick the newest open issue labeled agent-ready,
+  reproduce it, fix the root cause in the source
+  (never the tests), prove the suite green, and
+  open a PR that closes the issue. No matching
+  issue? Record the check and stop.
+
+<span class="text-lav-soft">runtime:</span> loop-runner
+<span class="text-lav-soft">trigger:</span> event            <span class="text-cream/35"># the Action fires it →</span>
+
+<span class="text-lav-soft">model:</span> claude-sonnet-4-6
+<span class="text-lav-soft">max_turns:</span> <span class="text-coral">60</span>            <span class="text-cream/35"># STOP: turn cap</span>
+<span class="text-lav-soft">budget_usd:</span> <span class="text-coral">5</span>            <span class="text-cream/35"># STOP: cost cap</span>
+
+<span class="text-lav-soft">repo:</span> your-org/your-app   <span class="text-cream/35"># Two-Repo Mode: PRs land here</span>
+<span class="text-lav-soft">prompt:</span> loops/issue-fix/prompt.md
+<span class="text-lav-soft">verify:</span> loops/issue-fix/verify.sh
+<span class="text-lav-soft">allowed_tools:</span> <span class="text-sage">"Bash,Read,Write,Edit,Glob,Grep"</span>
+
+<span class="text-lav-soft">connectors:</span> []           <span class="text-cream/35"># github is built in</span>
+<span class="text-lav-soft">memory:</span> loops/issue-fix/state
+<span class="text-lav-soft">push:</span> <span class="text-sage">pr</span>                 <span class="text-cream/35"># propose, never land</span></code></pre>
+          </div>
+
+          <div class="space-y-6">
+            <!-- the trigger -->
+            <div class="reveal clay p-6" style="--rd:100ms">
+              <div class="mb-3 flex items-center justify-between gap-3">
+                <span class="min-w-0 truncate font-mono text-[11px] uppercase tracking-widest text-ink/45">.github/workflows/issue-fix.yml · in the work repo</span>
+                <button type="button" data-copy-from="#recipe-action" class="btn-clay shrink-0 bg-coral px-3 py-1.5 font-mono text-[11px] font-semibold text-white" aria-label="Copy workflow">copy</button>
+              </div>
+              <pre class="overflow-x-auto rounded-2xl bg-navy-deep p-4 font-mono text-[11.5px] leading-5 text-cream/90"><code id="recipe-action"><span class="text-lav-soft">on:</span>
+  <span class="text-lav-soft">issues:</span> { types: [opened, labeled] }
+<span class="text-lav-soft">permissions:</span> { id-token: write }  <span class="text-cream/35"># WIF — no stored keys</span>
+<span class="text-lav-soft">jobs:</span>
+  <span class="text-lav-soft">fire:</span>
+    <span class="text-lav-soft">if:</span> contains(github.event.issue.labels.*.name, <span class="text-sage">'agent-ready'</span>)
+    <span class="text-lav-soft">runs-on:</span> ubuntu-latest
+    <span class="text-lav-soft">steps:</span>
+      - <span class="text-lav-soft">uses:</span> google-github-actions/auth@v2
+        <span class="text-lav-soft">with:</span> { workload_identity_provider: <span class="text-sage">"…"</span>, service_account: <span class="text-sage">"…"</span> }
+      - <span class="text-lav-soft">run:</span> gcloud run jobs execute loop-issue-fix --region=us-central1</code></pre>
+            </div>
+
+            <!-- why it's safe -->
+            <ul class="reveal space-y-2.5 text-[15px] leading-relaxed text-ink/75" style="--rd:180ms">
+              <li class="flex gap-3"><span class="mt-0.5 shrink-0 font-mono text-sage-deep">✓</span><span>The <span class="font-mono text-sm">agent-ready</span> label is the gate — a human opts each issue in.</span></li>
+              <li class="flex gap-3"><span class="mt-0.5 shrink-0 font-mono text-sage-deep">✓</span><span><span class="font-mono text-sm">push: pr</span> means it can never land on main alone — auto-merge is your branch protection's call.</span></li>
+              <li class="flex gap-3"><span class="mt-0.5 shrink-0 font-mono text-sage-deep">✓</span><span>The <span class="font-mono text-sm">memory:</span> ledger is why run #47 doesn't re-fix issue #3.</span></li>
+            </ul>
+
+            <!-- coming up -->
+            <div class="reveal flex flex-wrap items-center gap-2.5" style="--rd:260ms">
+              <span class="font-mono text-xs font-semibold uppercase tracking-[0.18em] text-ink/50">more on the way</span>
+              <span class="rounded-full border-2 border-dashed border-clay/40 px-3.5 py-1 font-mono text-xs text-clay-deep">error sweep</span>
+              <span class="rounded-full border-2 border-dashed border-clay/40 px-3.5 py-1 font-mono text-xs text-clay-deep">slack digest → issues</span>
+              <span class="rounded-full border-2 border-dashed border-clay/40 px-3.5 py-1 font-mono text-xs text-clay-deep">nightly refactor</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
     <!-- ============================== FINAL CTA ============================== -->
     <section class="relative overflow-hidden px-4 pb-24 pt-8 sm:px-6">
       <div class="mx-auto max-w-6xl">
@@ -728,6 +813,7 @@
         <a href="https://github.com/SaschaHeyer/loop-runner/blob/main/loop-runner/get-started.md" class="text-navy underline decoration-lav underline-offset-4 hover:decoration-coral">get-started</a>
         <a href="https://github.com/SaschaHeyer/loop-runner/blob/main/docs/proxy.md" class="text-navy underline decoration-lav underline-offset-4 hover:decoration-coral">connectors</a>
         <a href="https://github.com/SaschaHeyer/loop-runner/blob/main/docs/browser.md" class="text-navy underline decoration-lav underline-offset-4 hover:decoration-coral">browser</a>
+        <span id="gh-updated" class="text-ink/45"></span>
       </div>
       <p class="font-mono text-xs text-ink/55 lg:whitespace-nowrap">crafted by <a href="https://www.linkedin.com/in/saschaheyer/" class="font-semibold text-navy underline decoration-lav underline-offset-4 transition hover:decoration-coral">Sascha Heyer</a></p>
     </div>
