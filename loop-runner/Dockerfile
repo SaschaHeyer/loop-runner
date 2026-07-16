@@ -16,6 +16,14 @@ RUN curl -fsSL https://dl.google.com/dl/cloudsdk/channels/rapid/downloads/google
     && /opt/google-cloud-sdk/install.sh --quiet --path-update=true
 ENV PATH="/opt/google-cloud-sdk/bin:${PATH}"
 
+# Firestore emulator (+ the headless JRE it needs). Lets a loop's verifier run the app's test suite
+# against REAL Firestore semantics locally, catching backend-shape bugs (ordering on an unstored field,
+# document-id parsing) that an in-memory test fake silently hides — before they reach the deploy check.
+# Pre-installed so there's no run-time download; a loop that doesn't use Firestore simply never starts it.
+RUN apt-get update && apt-get install -y --no-install-recommends default-jre-headless \
+    && rm -rf /var/lib/apt/lists/* \
+    && gcloud components install cloud-firestore-emulator --quiet
+
 # GitHub CLI (some CEO tools shell `gh`).
 RUN curl -fsSL https://cli.github.com/packages/githubcli-archive-keyring.gpg \
       | dd of=/usr/share/keyrings/githubcli-archive-keyring.gpg \
