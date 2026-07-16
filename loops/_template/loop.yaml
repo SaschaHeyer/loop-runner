@@ -1,0 +1,28 @@
+# loops/__NAME__/loop.yaml — a new loop. Fill in the blanks, then:
+#   cd loop-runner && LOOP=__NAME__ ./deploy.sh
+name: __NAME__
+description: >
+  One sentence: what this loop does, and what "done" looks like.
+
+runtime: loop-runner
+trigger: schedule             # schedule | manual
+schedule: "0 * * * *"         # cron, UTC (only used when trigger: schedule)
+
+model: claude-sonnet-4-6      # claude-opus-4-8 for harder judgement
+max_turns: 40                 # STOP: turn cap
+budget_usd: 3                 # STOP: advisory per-loop cost cap
+
+# system_prompt: loops/__NAME__/system.md   # optional durable role/brief (uncomment to use)
+prompt: loops/__NAME__/prompt.md            # the per-loop kickoff (required)
+verify: loops/__NAME__/verify.sh            # exit 0 = pass — make it a REAL check if you can
+allowed_tools: "Bash,Read,Write,Edit,Glob,Grep,WebSearch,WebFetch"
+
+skills: []                    # extra skills repos (owner/repo) to clone + mount (local skills placed under loops/__NAME__/skills/ are auto-registered)
+connectors: []                # proxy-injected creds this loop uses (declarative)
+memory: loops/__NAME__/state  # where this loop remembers (repo-relative)
+push: pr                      # main = ship it | pr = propose for review | none
+
+git_user_name: __NAME__ loop
+git_user_email: loop@example.com
+
+tier: "?"                     # be honest: 1 exists · 2 runs · 3 ground-truth · 4 self-judge · 5 human

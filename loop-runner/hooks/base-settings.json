@@ -1,0 +1,11 @@
+{
+  "//": "Base Claude Code hooks injected into every loop by the runner. Merged with each loop's own loops/<name>/hooks/settings.json into .claude/settings.local.json at runtime (see entrypoint.sh). Hook scripts ship in the image at /harness/hooks/.",
+  "hooks": {
+    "Stop": [
+      { "hooks": [ { "type": "command", "command": "bash /harness/hooks/persist.sh" } ] }
+    ],
+    "PreToolUse": [
+      { "matcher": "Bash", "hooks": [ { "type": "command", "command": "bash /harness/hooks/guard.sh" } ] }
+    ]
+  }
+}

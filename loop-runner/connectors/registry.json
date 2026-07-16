@@ -1,0 +1,27 @@
+{
+  "_comment": "Connector registry (M11b): the single source of truth for the env-bearer connectors, read by BOTH proxy_addon.py (egress auth injection) and deploy.sh (--set-secrets wiring). Adding a connector = one entry here + a Secret Manager secret; NO code edit in either file. Each connector: domain (host the proxy matches, plus its subdomains), secret (Secret Manager secret name deploy.sh wires as <env>=<secret>:latest), env (env var the proxy reads the credential from), header (Authorization template; {} is replaced by the credential). The two auth-SHAPED exceptions, gcp (metadata-server SA token) and github (Basic base64 of the PAT), are NOT env-bearer and stay special-cased in code (proxy_addon.py) + always-on for github in deploy.sh; they are intentionally absent here. The entries below (resend, stripe, cloudflare, slack) are EXAMPLES that show the shape -- keep, remove, or replace them with whatever APIs your loops call; none activate unless a loop declares the connector AND the secret exists.",
+  "resend": {
+    "domain": "api.resend.com",
+    "secret": "resend-api-key",
+    "env": "RESEND_API_KEY",
+    "header": "Bearer {}"
+  },
+  "stripe": {
+    "domain": "api.stripe.com",
+    "secret": "stripe-secret-key",
+    "env": "STRIPE_SECRET_KEY",
+    "header": "Bearer {}"
+  },
+  "cloudflare": {
+    "domain": "api.cloudflare.com",
+    "secret": "cloudflare-api-token",
+    "env": "CLOUDFLARE_API_TOKEN",
+    "header": "Bearer {}"
+  },
+  "slack": {
+    "domain": "slack.com",
+    "secret": "slack-bot-token",
+    "env": "SLACK_BOT_TOKEN",
+    "header": "Bearer {}"
+  }
+}

@@ -1,0 +1,30 @@
+# The smallest loop in the library. It appends one timestamped greeting to its own state file —
+# nothing else. Its job is to prove the WHOLE spine works end to end (clone, model, task, verify,
+# commit, push) without touching any real work repo. Use it as a health canary for the harness.
+#   cd loop-runner && LOOP=hello-world ./deploy.sh
+name: hello-world
+description: >
+  Append one timestamped greeting to loops/hello-world/state/greetings.md and stop. The smallest
+  possible loop; a health canary for the whole runner.
+
+runtime: loop-runner
+trigger: manual               # run on demand (change to `schedule` + a cron for a daily canary)
+# schedule: "0 6 * * *"       # e.g. daily 06:00 UTC, if you flip trigger to schedule
+
+model: claude-sonnet-4-6      # trivial task — the cheap model, and a tiny turn cap
+max_turns: 6
+budget_usd: 1
+
+prompt: loops/hello-world/prompt.md
+verify: loops/hello-world/verify.sh
+allowed_tools: "Read,Write,Edit,Bash"   # all it needs: read the file, append a line, `date -u`
+
+skills: []
+connectors: []                # NONE — proves a loop can run without ever touching the auth proxy
+memory: loops/hello-world/state
+push: main                    # only ever writes its own state file, so shipping to main is safe
+
+git_user_name: hello-world loop
+git_user_email: loop@example.com
+
+tier: "3 · ground-truth (greeting appended, well-formed, and pushed)"

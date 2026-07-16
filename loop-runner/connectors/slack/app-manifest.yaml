@@ -1,0 +1,25 @@
+# Slack app manifest for loop connectors — paste at api.slack.com/apps -> Create New App ->
+# "From a manifest" -> pick the workspace -> YAML tab. Near read-only: reads channel history and posts
+# ONE threaded acknowledgement per filed issue (chat:write) so the reporter sees "got it". No user-token
+# scopes, no socket mode (we poll via the egress proxy). For PRIVATE channels add under bot:
+#   - groups:history  and  - groups:read
+# NOTE: adding chat:write to an already-installed app requires REINSTALL (and, on a managed/enterprise
+# workspace, admin re-approval) before the xoxb token gains the new scope.
+# Full setup + auth options (bot vs user token vs MCP): ../README.md
+display_information:
+  name: slack-digest
+  description: Reads channel history and posts an acknowledgement in-thread when it files an issue
+features:
+  bot_user:
+    display_name: slack-digest
+    always_online: false
+oauth_config:
+  scopes:
+    bot:
+      - channels:history
+      - channels:read
+      - chat:write        # post a threaded "filed as <issue>" ack (reinstall required to take effect)
+settings:
+  org_deploy_enabled: false
+  socket_mode_enabled: false
+  token_rotation_enabled: false

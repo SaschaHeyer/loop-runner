@@ -1,0 +1,2 @@
+# The __NAME__ loop's git-memory (declared as `memory:` in loop.yaml). Write a small ledger here so
+# repeat runs don't redo the same work. Delete this file once the loop writes real state.
