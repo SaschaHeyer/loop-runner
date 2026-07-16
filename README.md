@@ -88,6 +88,16 @@ flowchart TB
 
 ## Quickstart
 
+**Skill-first.** Teach your own Claude Code the whole runbook (setup, canary, authoring, deploy,
+debug), then let it drive:
+
+```bash
+npx skills add SaschaHeyer/loop-runner   # installs the /loop-runner skill (Agent Skills standard)
+# then, inside Claude Code:  "set up loop runner and deploy the canary"
+```
+
+Or by hand:
+
 ```bash
 # 1. configure (project, region, service account, secrets)
 cp loop-runner/.env.example loop-runner/.env && edit loop-runner/.env
@@ -125,6 +135,9 @@ loops/
   hello-world/   a runnable canary loop
 skills/
   loop-new/      interview-driven authoring skill for new loops
+.claude/skills/
+  loop-runner/   the installable operator skill — npx skills add SaschaHeyer/loop-runner
+site/            the landing page (claymation, Tailwind) — see site/README.md
 ```
 
 ## Honest boundaries

@@ -4,6 +4,9 @@ __pycache__/
 *.egg-info/
 .venv/
 
+# node (landing page build)
+node_modules/
+
 # secrets & local config — never commit
 .env
 loop-runner/.env

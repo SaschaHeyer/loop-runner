@@ -1,0 +1,606 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Loop Runner — run any agentic loop headless</title>
+  <meta name="description" content="A task-agnostic harness that runs agentic loops headless in a Cloud Run Job — with guaranteed commit → push → verify → record. Skill-first: npx skills add SaschaHeyer/loop-runner." />
+  <meta property="og:title" content="Loop Runner — run any agentic loop headless" />
+  <meta property="og:description" content="TRIGGER → EXECUTE → VERIFY → RECORD → STOP. The agent forgets; the repo doesn't." />
+  <meta property="og:type" content="website" />
+  <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' rx='16' fill='%23f4edde'/%3E%3Cpath d='M32 12a20 20 0 1 1-14.1 5.9' fill='none' stroke='%23b96a50' stroke-width='9' stroke-linecap='round'/%3E%3Cpath d='M10 22 L20 14 L22 27 Z' fill='%23b96a50'/%3E%3Ccircle cx='32' cy='32' r='6' fill='%2343d97d'/%3E%3C/svg%3E" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Baloo+2:wght@600;700;800&family=DM+Sans:ital,wght@0,400;0,500;0,700;1,400&family=JetBrains+Mono:wght@400;600;700&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="dist/style.css" />
+</head>
+<body class="antialiased">
+
+  <!-- ============================== NAV ============================== -->
+  <header class="fixed inset-x-0 top-3 z-50 px-3 sm:top-5 sm:px-6">
+    <nav id="nav" class="clay mx-auto flex max-w-6xl items-center justify-between gap-3 px-4 py-2.5 transition-shadow sm:px-6" aria-label="Main">
+      <a href="#top" class="flex items-center gap-2.5">
+        <svg viewBox="0 0 64 64" class="h-9 w-9" aria-hidden="true">
+          <path d="M32 12a20 20 0 1 1-14.1 5.9" fill="none" stroke="var(--color-clay)" stroke-width="9" stroke-linecap="round"/>
+          <path d="M10 22 L20 14 L22 27 Z" fill="var(--color-clay)"/>
+          <circle cx="32" cy="32" r="6" fill="var(--color-led)" class="led-pulse"/>
+        </svg>
+        <span class="font-display text-xl font-bold tracking-tight text-navy-deep">Loop&nbsp;Runner</span>
+      </a>
+      <div class="hidden items-center gap-6 font-display text-[15px] font-semibold text-navy md:flex">
+        <a href="#skill" class="transition hover:text-clay">Install</a>
+        <a href="#guarantees" class="transition hover:text-clay">Guarantees</a>
+        <a href="#how" class="transition hover:text-clay">How it works</a>
+        <a href="#loops" class="transition hover:text-clay">Loops</a>
+      </div>
+      <a href="https://github.com/SaschaHeyer/loop-runner" class="btn-clay flex items-center gap-2 bg-navy px-4 py-2 text-sm text-cream">
+        <svg viewBox="0 0 16 16" class="h-4 w-4 fill-current" aria-hidden="true"><path d="M8 0C3.58 0 0 3.58 0 8c0 3.54 2.29 6.53 5.47 7.59.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82.64-.18 1.32-.27 2-.27s1.36.09 2 .27c1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A8.01 8.01 0 0 0 16 8c0-4.42-3.58-8-8-8Z"/></svg>
+        <span class="hidden sm:inline">GitHub</span>
+      </a>
+    </nav>
+  </header>
+
+  <main id="top">
+    <!-- ============================== HERO ============================== -->
+    <section class="relative overflow-hidden px-4 pb-16 pt-28 sm:px-6 sm:pt-36 lg:pb-24">
+      <!-- floating clay blobs -->
+      <div aria-hidden="true" class="pointer-events-none absolute -right-24 top-24 h-72 w-72 rounded-full bg-lav/25 blur-3xl"></div>
+      <div aria-hidden="true" class="pointer-events-none absolute -left-32 bottom-0 h-80 w-80 rounded-full bg-coral/20 blur-3xl"></div>
+
+      <div class="mx-auto grid max-w-6xl items-center gap-10 lg:grid-cols-[1fr_1.08fr] lg:gap-6">
+
+        <!-- stage scene -->
+        <div class="order-2 lg:order-1">
+          <svg viewBox="0 0 640 640" class="mx-auto w-full max-w-[520px]" role="img" aria-label="A round clay mascot wearing sage headphones holds a loop spec card with a glowing green status light, on a small stage beside a sprouting vine.">
+            <defs>
+              <linearGradient id="curtainGrad" x1="0" y1="0" x2="0" y2="1">
+                <stop offset="0" stop-color="#36456f"/><stop offset=".55" stop-color="#2a3760"/><stop offset="1" stop-color="#1f2947"/>
+              </linearGradient>
+              <radialGradient id="clayGrad" cx="0.38" cy="0.26" r="0.95">
+                <stop offset="0" stop-color="#d18a6b"/><stop offset=".55" stop-color="#b96a50"/><stop offset="1" stop-color="#9d5540"/>
+              </radialGradient>
+              <linearGradient id="cardGrad" x1="0" y1="0" x2="0.3" y2="1">
+                <stop offset="0" stop-color="#fdf8ec"/><stop offset="1" stop-color="#f0e5cd"/>
+              </linearGradient>
+              <filter id="soften" x="-60%" y="-60%" width="220%" height="220%"><feGaussianBlur stdDeviation="7"/></filter>
+              <filter id="cardShadow" x="-40%" y="-40%" width="180%" height="180%">
+                <feDropShadow dx="0" dy="7" stdDeviation="7" flood-color="#46321e" flood-opacity="0.28"/>
+              </filter>
+            </defs>
+
+            <!-- curtain -->
+            <g>
+              <path d="M-30 -30 L330 -30 L330 368 Q 312 412 285 370 Q 266 418 234 372 Q 213 420 180 370 Q 158 415 126 369 Q 104 414 70 368 Q 48 412 14 366 Q -6 400 -30 364 Z" fill="url(#curtainGrad)"/>
+              <g stroke="#1c2540" stroke-width="11" stroke-linecap="round" opacity="0.45" fill="none">
+                <path d="M52 -20 C 46 120, 58 260, 50 352"/>
+                <path d="M118 -20 C 112 130, 124 250, 116 356"/>
+                <path d="M186 -20 C 180 120, 192 265, 184 354"/>
+                <path d="M254 -20 C 248 125, 260 255, 252 356"/>
+              </g>
+              <g stroke="#4a5a8b" stroke-width="5" stroke-linecap="round" opacity="0.35" fill="none">
+                <path d="M84 -20 C 80 130, 90 260, 84 348"/>
+                <path d="M152 -20 C 148 135, 158 250, 152 350"/>
+                <path d="M220 -20 C 216 125, 226 260, 220 350"/>
+                <path d="M288 -20 C 284 130, 294 250, 288 352"/>
+              </g>
+            </g>
+
+            <!-- stage floor -->
+            <ellipse cx="315" cy="560" rx="295" ry="56" fill="var(--color-bone-deep)"/>
+            <ellipse cx="315" cy="556" rx="295" ry="54" fill="#efe6d0"/>
+
+            <!-- ground shadows -->
+            <ellipse cx="250" cy="549" rx="122" ry="18" fill="#46321e" opacity="0.16" filter="url(#soften)"/>
+            <ellipse cx="462" cy="551" rx="56" ry="10" fill="#46321e" opacity="0.13" filter="url(#soften)"/>
+
+            <!-- sprout -->
+            <g class="sway">
+              <path d="M456 548 C 474 500, 432 468, 452 428 C 470 396, 442 384, 448 362" fill="none" stroke="#8fae8e" stroke-width="11" stroke-linecap="round"/>
+              <path d="M448 548 C 428 505, 472 470, 448 434 C 432 404, 460 390, 450 366" fill="none" stroke="#afa3df" stroke-width="9" stroke-linecap="round" opacity="0.95"/>
+              <ellipse cx="420" cy="398" rx="24" ry="11" fill="#afa3df" transform="rotate(-38 420 398)"/>
+              <ellipse cx="482" cy="424" rx="21" ry="10" fill="#9184c9" transform="rotate(24 482 424)"/>
+              <ellipse cx="424" cy="466" rx="20" ry="9" fill="#8fae8e" transform="rotate(-22 424 466)"/>
+              <ellipse cx="436" cy="352" rx="19" ry="9" fill="#cfc6ec" transform="rotate(-58 436 352)"/>
+              <ellipse cx="466" cy="350" rx="19" ry="9" fill="#9cb89b" transform="rotate(42 466 350)"/>
+              <circle cx="452" cy="470" r="11" fill="#7fa381"/>
+              <circle cx="452" cy="470" r="6" fill="var(--color-led)" class="led-pulse"/>
+            </g>
+
+            <!-- mascot -->
+            <g class="bob">
+              <!-- feet -->
+              <ellipse cx="212" cy="514" rx="27" ry="15" fill="#a55b44"/>
+              <ellipse cx="290" cy="514" rx="27" ry="15" fill="#a55b44"/>
+              <!-- body -->
+              <path d="M250 262 C 306 262 338 300 342 356 C 346 416 352 462 344 483 C 335 505 301 510 250 510 C 199 510 165 505 156 483 C 148 462 154 416 158 356 C 162 300 194 262 250 262 Z" fill="url(#clayGrad)"/>
+              <!-- head shine -->
+              <ellipse cx="220" cy="292" rx="30" ry="14" fill="#ffffff" opacity="0.22" transform="rotate(-16 220 292)"/>
+              <!-- cheeks -->
+              <circle cx="196" cy="354" r="13" fill="#b5a7e2"/>
+              <circle cx="304" cy="354" r="13" fill="#b5a7e2"/>
+              <!-- eyes -->
+              <circle cx="218" cy="331" r="8.5" fill="#33302b" class="blink"/>
+              <circle cx="282" cy="331" r="8.5" fill="#33302b" class="blink"/>
+              <!-- smile -->
+              <path d="M236 346 Q 250 358 264 346" fill="none" stroke="#33302b" stroke-width="5.5" stroke-linecap="round"/>
+              <!-- headphones -->
+              <path d="M176 302 C 188 232 312 232 324 302" fill="none" stroke="#9cb89b" stroke-width="21" stroke-linecap="round"/>
+              <path d="M182 296 C 196 240 304 240 318 296" fill="none" stroke="#b7ccb4" stroke-width="6" stroke-linecap="round" opacity="0.7"/>
+              <ellipse cx="171" cy="322" rx="23" ry="31" fill="#9cb89b" transform="rotate(-9 171 322)"/>
+              <ellipse cx="171" cy="322" rx="12" ry="19" fill="#7fa381" transform="rotate(-9 171 322)"/>
+              <ellipse cx="329" cy="322" rx="23" ry="31" fill="#9cb89b" transform="rotate(9 329 322)"/>
+              <ellipse cx="329" cy="322" rx="12" ry="19" fill="#7fa381" transform="rotate(9 329 322)"/>
+              <!-- coral belly peeking behind the card -->
+              <circle cx="250" cy="436" r="60" fill="#ef7d5e"/>
+              <!-- spec card -->
+              <g transform="rotate(-6 250 445)" filter="url(#cardShadow)">
+                <rect x="194" y="382" width="120" height="144" rx="17" fill="url(#cardGrad)"/>
+                <circle cx="222" cy="410" r="14" fill="#7fa381"/>
+                <circle cx="222" cy="410" r="7.5" fill="var(--color-led)" class="led-pulse"/>
+                <path d="M251 400 l 21 12 l -21 12 Z" fill="#9184c9"/>
+                <path d="M272 400 l 21 12 l -21 12 Z" fill="#afa3df"/>
+                <rect x="212" y="450" width="86" height="13" rx="6.5" fill="#afa3df"/>
+                <rect x="212" y="473" width="86" height="13" rx="6.5" fill="#bfb4e6"/>
+                <rect x="212" y="496" width="58" height="13" rx="6.5" fill="#cfc6ec"/>
+              </g>
+              <!-- arms hugging the card -->
+              <path d="M166 390 C 156 432 170 458 202 462" fill="none" stroke="#b0604a" stroke-width="29" stroke-linecap="round"/>
+              <path d="M334 390 C 344 432 330 458 298 462" fill="none" stroke="#b0604a" stroke-width="29" stroke-linecap="round"/>
+              <circle cx="204" cy="463" r="16" fill="#c1795d"/>
+              <circle cx="296" cy="463" r="16" fill="#c1795d"/>
+            </g>
+          </svg>
+        </div>
+
+        <!-- headline + CTA -->
+        <div class="order-1 text-center lg:order-2 lg:text-left">
+          <p class="reveal mb-5 inline-flex items-center gap-2 rounded-full bg-navy/8 px-4 py-1.5 font-mono text-[11px] font-semibold uppercase tracking-[0.22em] text-navy sm:text-xs">
+            <span class="inline-block h-2 w-2 rounded-full bg-led led-pulse"></span>
+            Loop engineering · headless
+          </p>
+          <h1 class="clay-letters text-[clamp(3.6rem,10vw,7.4rem)]" aria-label="Loop Runner">
+            <span aria-hidden="true" class="block">
+              <span class="plop" style="--c:#f2e8d0; --tilt:-2.5deg; animation-delay:.05s">L</span><span class="plop" style="--c:#afa3df; --tilt:1.6deg; animation-delay:.13s">O</span><span class="plop" style="--c:#b96a50; --tilt:-1.4deg; animation-delay:.21s">O</span><span class="plop" style="--c:#2a3760; --tilt:2.2deg; animation-delay:.29s">P</span>
+            </span>
+            <span aria-hidden="true" class="block">
+              <span class="plop" style="--c:#ef7d5e; --tilt:1.8deg; animation-delay:.38s">R</span><span class="plop" style="--c:#afa3df; --tilt:-2deg; animation-delay:.46s">U</span><span class="plop" style="--c:#f2e8d0; --tilt:1.2deg; animation-delay:.54s">N</span><span class="plop" style="--c:#9cb89b; --tilt:-1.6deg; animation-delay:.62s">N</span><span class="plop" style="--c:#b96a50; --tilt:2.4deg; animation-delay:.70s">E</span><span class="plop" style="--c:#2a3760; --tilt:-2.2deg; animation-delay:.78s">R</span>
+            </span>
+          </h1>
+          <p class="reveal mx-auto mt-6 max-w-xl text-lg leading-relaxed text-ink/80 sm:text-xl lg:mx-0" style="--rd:120ms">
+            Run any agentic loop <strong class="text-navy">headless in a Cloud Run Job</strong> — the harness guarantees
+            <span class="font-mono text-[0.92em] font-semibold text-clay-deep">commit&nbsp;→&nbsp;push&nbsp;→&nbsp;verify&nbsp;→&nbsp;record</span>
+            before it exits, so the agent can't forget its own work.
+          </p>
+
+          <div class="reveal mx-auto mt-8 max-w-xl lg:mx-0" style="--rd:220ms">
+            <div class="clay flex items-center gap-3 py-3 pl-5 pr-3">
+              <span aria-hidden="true" class="font-mono text-sm font-bold text-coral-deep">$</span>
+              <code class="min-w-0 flex-1 overflow-x-auto whitespace-nowrap text-left font-mono text-[13px] font-semibold text-navy-deep sm:text-sm">npx skills add SaschaHeyer/loop-runner</code>
+              <button type="button" data-copy="npx skills add SaschaHeyer/loop-runner" class="btn-clay shrink-0 bg-coral px-4 py-2 text-sm text-white" aria-label="Copy install command">copy</button>
+            </div>
+            <div class="mt-4 flex flex-wrap items-center justify-center gap-3 lg:justify-start">
+              <a href="#skill" class="btn-clay bg-lav px-5 py-2.5 text-[15px] text-navy-deep">See the 3-step setup</a>
+              <a href="https://github.com/SaschaHeyer/loop-runner#readme" class="font-display text-[15px] font-semibold text-navy underline decoration-lav decoration-[3px] underline-offset-4 transition hover:decoration-coral">Read the docs →</a>
+            </div>
+            <p class="mt-5 font-mono text-[11px] uppercase tracking-wider text-ink/45">Apache-2.0 · Claude Code on Vertex AI · Google Cloud Run Jobs</p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ============================== MANTRA MARQUEE ============================== -->
+    <section aria-label="Loop lifecycle" class="relative overflow-hidden py-4">
+      <div class="-mx-6 -rotate-1 bg-lav/30 py-4 shadow-[inset_0_2px_0_rgba(255,255,255,.5),inset_0_-2px_0_rgba(70,50,30,.08)]">
+      <div class="marquee flex w-max items-center gap-4 pr-4 font-display text-sm font-bold sm:text-base">
+        <!-- track (duplicated for the seamless loop) -->
+        <div class="flex items-center gap-4" aria-hidden="false">
+          <span class="clay-chip bg-cream px-4 py-1.5 text-navy">TRIGGER</span><span class="text-navy/50">→</span>
+          <span class="clay-chip bg-coral px-4 py-1.5 text-white">EXECUTE</span><span class="text-navy/50">→</span>
+          <span class="clay-chip bg-sage px-4 py-1.5 text-navy-deep">VERIFY</span><span class="text-navy/50">→</span>
+          <span class="clay-chip bg-navy px-4 py-1.5 text-cream">RECORD</span><span class="text-navy/50">→</span>
+          <span class="clay-chip bg-clay px-4 py-1.5 text-cream">STOP</span>
+          <span class="px-3 font-mono text-[13px] font-semibold normal-case text-navy-deep/70 italic">the agent forgets — the repo doesn't ✦</span>
+        </div>
+        <div class="flex items-center gap-4" aria-hidden="true">
+          <span class="clay-chip bg-cream px-4 py-1.5 text-navy">TRIGGER</span><span class="text-navy/50">→</span>
+          <span class="clay-chip bg-coral px-4 py-1.5 text-white">EXECUTE</span><span class="text-navy/50">→</span>
+          <span class="clay-chip bg-sage px-4 py-1.5 text-navy-deep">VERIFY</span><span class="text-navy/50">→</span>
+          <span class="clay-chip bg-navy px-4 py-1.5 text-cream">RECORD</span><span class="text-navy/50">→</span>
+          <span class="clay-chip bg-clay px-4 py-1.5 text-cream">STOP</span>
+          <span class="px-3 font-mono text-[13px] font-semibold normal-case text-navy-deep/70 italic">the agent forgets — the repo doesn't ✦</span>
+        </div>
+      </div>
+      </div>
+    </section>
+
+    <!-- ============================== SKILL-FIRST INSTALL ============================== -->
+    <section id="skill" class="relative scroll-mt-28 px-4 py-20 sm:px-6 sm:py-28">
+      <div class="mx-auto max-w-6xl">
+        <div class="mx-auto max-w-2xl text-center">
+          <p class="reveal font-mono text-xs font-semibold uppercase tracking-[0.22em] text-clay-deep">skill-first</p>
+          <h2 class="reveal mt-3 font-display text-4xl font-extrabold tracking-tight text-navy-deep sm:text-5xl" style="--rd:80ms">Install it like a skill.<br class="hidden sm:block" /> Because it is one.</h2>
+          <p class="reveal mx-auto mt-4 max-w-xl text-lg text-ink/75" style="--rd:160ms">
+            Loop Runner ships as a <a href="https://code.claude.com/docs/en/skills" class="font-semibold text-navy underline decoration-lav decoration-2 underline-offset-4 hover:decoration-coral">Claude&nbsp;Code skill</a>.
+            One command teaches your agent the whole runbook — setup, canary, authoring, deploy, debug.
+          </p>
+        </div>
+
+        <div class="mt-14 grid gap-6 lg:grid-cols-3">
+          <!-- step 1 -->
+          <div class="reveal clay flex flex-col p-7">
+            <span class="clay-chip inline-flex h-11 w-11 items-center justify-center self-start bg-coral font-display text-xl font-extrabold text-white">1</span>
+            <h3 class="mt-5 font-display text-2xl font-bold text-navy-deep">Add the skill</h3>
+            <p class="mt-2 flex-1 text-[15px] leading-relaxed text-ink/75">Installs <span class="font-mono text-sm font-semibold text-clay-deep">/loop-runner</span> into Claude Code, following the Agent Skills standard. Add <span class="font-mono text-sm">-g</span> to keep it across every project.</p>
+            <div class="mt-5 flex items-center gap-2 rounded-2xl bg-navy-deep px-3.5 py-3">
+              <code class="min-w-0 flex-1 break-words font-mono text-[11.5px] font-medium leading-5 text-cream/95">npx skills add SaschaHeyer/loop-runner</code>
+              <button type="button" data-copy="npx skills add SaschaHeyer/loop-runner" class="shrink-0 rounded-lg bg-cream/10 px-2 py-1.5 font-mono text-[11px] font-semibold text-cream transition hover:bg-cream/20" aria-label="Copy install command">copy</button>
+            </div>
+          </div>
+          <!-- step 2 -->
+          <div class="reveal clay flex flex-col p-7" style="--rd:120ms">
+            <span class="clay-chip inline-flex h-11 w-11 items-center justify-center self-start bg-lav font-display text-xl font-extrabold text-navy-deep">2</span>
+            <h3 class="mt-5 font-display text-2xl font-bold text-navy-deep">Say the words</h3>
+            <p class="mt-2 flex-1 text-[15px] leading-relaxed text-ink/75">Claude follows the runbook: fork the library, fill <span class="font-mono text-sm">.env</span>, wire secrets into Secret Manager, deploy the <span class="font-semibold text-sage-deep">hello-world canary</span>.</p>
+            <div class="mt-5 rounded-2xl rounded-bl-md bg-lav/25 px-4 py-3">
+              <p class="font-mono text-[12.5px] text-navy-deep">"<span class="font-semibold">set up loop runner</span> and deploy the canary"</p>
+            </div>
+          </div>
+          <!-- step 3 -->
+          <div class="reveal clay flex flex-col p-7" style="--rd:240ms">
+            <span class="clay-chip inline-flex h-11 w-11 items-center justify-center self-start bg-sage font-display text-xl font-extrabold text-navy-deep">3</span>
+            <h3 class="mt-5 font-display text-2xl font-bold text-navy-deep">Watch a run land</h3>
+            <p class="mt-2 flex-1 text-[15px] leading-relaxed text-ink/75">One execution later there's a commit on <span class="font-mono text-sm">origin/main</span> the agent didn't have to remember to make. The spine works; now author real loops.</p>
+            <div class="mt-5 flex items-center gap-2 rounded-2xl bg-navy-deep px-4 py-3 font-mono text-[12.5px]">
+              <span class="text-cream/95">work_done=1 pushed=true</span>
+              <span class="ml-auto inline-block h-2.5 w-2.5 shrink-0 rounded-full bg-led led-pulse"></span>
+            </div>
+          </div>
+        </div>
+
+        <!-- animated terminal -->
+        <div class="reveal mx-auto mt-14 max-w-3xl" style="--rd:120ms">
+          <div class="clay-navy p-5 sm:p-7">
+            <div class="mb-4 flex items-center gap-2">
+              <span class="h-3 w-3 rounded-full bg-coral"></span>
+              <span class="h-3 w-3 rounded-full bg-lav"></span>
+              <span class="h-3 w-3 rounded-full bg-sage"></span>
+              <span class="ml-3 font-mono text-[11px] uppercase tracking-widest text-cream/50">loop-hello-world · cloud run job</span>
+            </div>
+            <div id="terminal" class="min-h-[19.5rem] space-y-1.5 font-mono text-[12.5px] leading-relaxed text-cream/90 sm:text-[13.5px]" aria-hidden="true"></div>
+            <p class="sr-only">Example run log: the job clones the library, starts the credential-injecting proxy, the agent appends its greeting, verify.sh exits 0, the stop hook commits and pushes, and the transcript is archived to Cloud Storage.</p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ============================== GUARANTEES ============================== -->
+    <section id="guarantees" class="relative scroll-mt-28 px-4 py-20 sm:px-6 sm:py-28">
+      <div aria-hidden="true" class="pointer-events-none absolute right-0 top-40 h-72 w-72 rounded-full bg-sage/25 blur-3xl"></div>
+      <div class="mx-auto max-w-6xl">
+        <div class="max-w-2xl">
+          <p class="reveal font-mono text-xs font-semibold uppercase tracking-[0.22em] text-clay-deep">why a harness</p>
+          <h2 class="reveal mt-3 font-display text-4xl font-extrabold tracking-tight text-navy-deep sm:text-5xl" style="--rd:80ms">Loops fail in famous ways.<br />The harness owns them.</h2>
+          <p class="reveal mt-4 text-lg text-ink/75" style="--rd:160ms">The agent runs as a <em>subprocess</em> that shares the container's filesystem — so the container, not the model's memory, enforces what must happen. You own the container.</p>
+        </div>
+
+        <div class="mt-12 grid gap-6 sm:grid-cols-2">
+          <div class="reveal clay p-7">
+            <div class="flex items-start justify-between gap-4">
+              <h3 class="font-display text-[22px] font-bold leading-snug text-navy-deep">"Deploy-without-commit"</h3>
+              <span class="clay-chip shrink-0 bg-coral/90 px-3 py-1 font-mono text-[10px] font-bold uppercase tracking-wider text-white">solved</span>
+            </div>
+            <p class="mt-2 text-[15px] leading-relaxed text-ink/75">The demo worked; <span class="font-mono text-sm">main</span> never heard about it. A <strong class="text-navy">Stop hook commits + pushes whatever the agent leaves behind</strong> — the persistence guarantee runs even when the agent forgets to.</p>
+            <p class="mt-4 font-mono text-xs text-sage-deep">✓ hooks/ · stop → commit → push</p>
+          </div>
+          <div class="reveal clay p-7" style="--rd:100ms">
+            <div class="flex items-start justify-between gap-4">
+              <h3 class="font-display text-[22px] font-bold leading-snug text-navy-deep">"Groundhog Day"</h3>
+              <span class="clay-chip shrink-0 bg-lav px-3 py-1 font-mono text-[10px] font-bold uppercase tracking-wider text-navy-deep">solved</span>
+            </div>
+            <p class="mt-2 text-[15px] leading-relaxed text-ink/75">Every run wakes up with amnesia. Each loop declares a <span class="font-mono text-sm">memory:</span> dir — <strong class="text-navy">git-backed state, committed after every run</strong>. The repo is the loop's memory.</p>
+            <p class="mt-4 font-mono text-xs text-sage-deep">✓ memory: loops/&lt;name&gt;/state</p>
+          </div>
+          <div class="reveal clay p-7" style="--rd:100ms">
+            <div class="flex items-start justify-between gap-4">
+              <h3 class="font-display text-[22px] font-bold leading-snug text-navy-deep">"Trust me, it worked"</h3>
+              <span class="clay-chip shrink-0 bg-sage px-3 py-1 font-mono text-[10px] font-bold uppercase tracking-wider text-navy-deep">solved</span>
+            </div>
+            <p class="mt-2 text-[15px] leading-relaxed text-ink/75">A model grading its own homework isn't verification. <span class="font-mono text-sm">verify.sh</span> <strong class="text-navy">runs in the harness, outside the agent</strong> — and every loop declares an honest tier: ground-truth readback beats self-judging.</p>
+            <p class="mt-4 font-mono text-xs text-sage-deep">✓ tier: 3 · ground-truth (exit 0 = pass)</p>
+          </div>
+          <div class="reveal clay p-7" style="--rd:200ms">
+            <div class="flex items-start justify-between gap-4">
+              <h3 class="font-display text-[22px] font-bold leading-snug text-navy-deep">"The 3 a.m. footgun"</h3>
+              <span class="clay-chip shrink-0 bg-navy px-3 py-1 font-mono text-[10px] font-bold uppercase tracking-wider text-cream">blocked</span>
+            </div>
+            <p class="mt-2 text-[15px] leading-relaxed text-ink/75">Nobody's watching at 3 a.m. A <strong class="text-navy">PreToolUse guard blocks the irreversible</strong> — <span class="font-mono text-sm">rm -rf /</span>, force-push, <span class="font-mono text-sm">reset --hard</span> — plus any project you declare off-limits.</p>
+            <p class="mt-4 font-mono text-xs text-sage-deep">✓ GUARD_BLOCKED_PROJECTS=prod-*</p>
+          </div>
+        </div>
+
+        <!-- also in the box -->
+        <div class="reveal mt-10 flex flex-wrap items-center gap-3" style="--rd:120ms">
+          <span class="font-mono text-xs font-semibold uppercase tracking-[0.18em] text-ink/50">also in the box</span>
+          <span class="clay-chip bg-cream px-4 py-1.5 font-mono text-xs font-medium text-navy">headless Chromium + chrome-devtools MCP</span>
+          <span class="clay-chip bg-cream px-4 py-1.5 font-mono text-xs font-medium text-navy">bundled Firestore emulator</span>
+          <span class="clay-chip bg-cream px-4 py-1.5 font-mono text-xs font-medium text-navy">per-loop subagents</span>
+          <span class="clay-chip bg-cream px-4 py-1.5 font-mono text-xs font-medium text-navy">external skill repos</span>
+          <span class="clay-chip bg-cream px-4 py-1.5 font-mono text-xs font-medium text-navy">transcripts + cost log → GCS</span>
+        </div>
+      </div>
+    </section>
+
+    <!-- ============================== HOW IT WORKS ============================== -->
+    <section id="how" class="relative scroll-mt-28 px-4 py-20 sm:px-6 sm:py-28">
+      <div class="mx-auto max-w-6xl">
+        <div class="max-w-2xl">
+          <p class="reveal font-mono text-xs font-semibold uppercase tracking-[0.22em] text-clay-deep">how it works</p>
+          <h2 class="reveal mt-3 font-display text-4xl font-extrabold tracking-tight text-navy-deep sm:text-5xl" style="--rd:80ms">One image. Any loop.<br />Keys stay outside.</h2>
+        </div>
+
+        <div class="reveal clay mt-12 overflow-x-auto p-4 sm:p-8" style="--rd:120ms">
+          <svg viewBox="0 0 980 400" class="min-w-[840px]" role="img" aria-label="Flow diagram: a cron, GitHub event, or manual command triggers a Cloud Run Job. Inside the job, the Claude Code agent makes tool calls with no auth header through an egress proxy that injects credentials. Work is pushed to GitHub and transcripts are archived to Cloud Storage.">
+            <defs>
+              <marker id="arrow" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+                <path d="M0 0 L10 5 L0 10 z" fill="#9184c9"/>
+              </marker>
+            </defs>
+
+            <!-- column labels -->
+            <text x="130" y="30" text-anchor="middle" class="font-mono" font-size="11" letter-spacing="3" fill="#9e5741" font-weight="700">TRIGGER</text>
+            <text x="500" y="30" text-anchor="middle" class="font-mono" font-size="11" letter-spacing="3" fill="#9e5741" font-weight="700">EXECUTE · VERIFY</text>
+            <text x="868" y="30" text-anchor="middle" class="font-mono" font-size="11" letter-spacing="3" fill="#9e5741" font-weight="700">RECORD</text>
+
+            <!-- trigger chips -->
+            <g class="font-mono" font-size="13">
+              <rect x="24" y="56" width="212" height="66" rx="20" fill="#fbf6ea" stroke="#e5d9bf" stroke-width="2"/>
+              <text x="130" y="84" text-anchor="middle" fill="#2a3760" font-weight="700">Cloud Scheduler</text>
+              <text x="130" y="104" text-anchor="middle" fill="#8b8577" font-size="11.5">trigger: schedule</text>
+
+              <rect x="24" y="162" width="212" height="66" rx="20" fill="#fbf6ea" stroke="#e5d9bf" stroke-width="2"/>
+              <text x="130" y="190" text-anchor="middle" fill="#2a3760" font-weight="700">GitHub Action · WIF</text>
+              <text x="130" y="210" text-anchor="middle" fill="#8b8577" font-size="11.5">trigger: event</text>
+
+              <rect x="24" y="268" width="212" height="66" rx="20" fill="#fbf6ea" stroke="#e5d9bf" stroke-width="2"/>
+              <text x="130" y="296" text-anchor="middle" fill="#2a3760" font-weight="700">gcloud jobs execute</text>
+              <text x="130" y="316" text-anchor="middle" fill="#8b8577" font-size="11.5">manual</text>
+            </g>
+
+            <!-- flow lines: triggers -> job -->
+            <g fill="none" stroke="#afa3df" stroke-width="3.5" stroke-linecap="round" stroke-dasharray="1 11" class="flow">
+              <path d="M240 89 C 290 89, 290 175, 336 183"/>
+              <path d="M240 195 C 278 195, 292 195, 336 195"/>
+              <path d="M240 301 C 290 301, 290 215, 336 207"/>
+            </g>
+
+            <!-- job card -->
+            <rect x="340" y="56" width="320" height="290" rx="26" fill="#2a3760"/>
+            <rect x="340" y="56" width="320" height="290" rx="26" fill="none" stroke="#1f2947" stroke-width="2"/>
+            <text x="500" y="92" text-anchor="middle" class="font-display" font-size="17" font-weight="700" fill="#fbf6ea">Cloud Run Job</text>
+            <text x="500" y="112" text-anchor="middle" class="font-mono" font-size="11.5" fill="#afa3df">LOOP=&lt;name&gt; picks the spec at runtime</text>
+
+            <rect x="368" y="132" width="264" height="62" rx="16" fill="#3a4a7d"/>
+            <text x="500" y="158" text-anchor="middle" class="font-mono" font-size="13" font-weight="700" fill="#fbf6ea">Claude Code agent</text>
+            <text x="500" y="178" text-anchor="middle" class="font-mono" font-size="11" fill="#cfc6ec">subprocess · shares the filesystem</text>
+
+            <path d="M500 194 L500 234" stroke="#43d97d" stroke-width="3" stroke-dasharray="1 9" stroke-linecap="round" class="flow"/>
+            <text x="514" y="218" class="font-mono" font-size="10.5" fill="#9db9a0">tool calls · no auth header</text>
+
+            <rect x="368" y="238" width="264" height="62" rx="16" fill="#3a4a7d"/>
+            <text x="500" y="264" text-anchor="middle" class="font-mono" font-size="13" font-weight="700" fill="#fbf6ea">egress proxy :8081</text>
+            <text x="500" y="284" text-anchor="middle" class="font-mono" font-size="11" fill="#cfc6ec">injects the credential on the wire</text>
+
+            <text x="500" y="330" text-anchor="middle" class="font-mono" font-size="11" fill="#f2b8a2">stop hook: commit → push → verify → record</text>
+
+            <!-- flow lines: job -> outputs -->
+            <g fill="none" stroke="#afa3df" stroke-width="3.5" stroke-linecap="round" stroke-dasharray="1 11" class="flow" marker-end="url(#arrow)">
+              <path d="M664 163 C 710 163, 710 118, 754 112"/>
+              <path d="M664 269 C 710 269, 710 262, 754 262"/>
+            </g>
+
+            <!-- outputs -->
+            <g class="font-mono" font-size="13">
+              <rect x="758" y="72" width="200" height="76" rx="20" fill="#9cb89b"/>
+              <text x="858" y="103" text-anchor="middle" fill="#1f2947" font-weight="700">GitHub</text>
+              <text x="858" y="124" text-anchor="middle" fill="#2f4632" font-size="11.5">commit · PR · state</text>
+
+              <rect x="758" y="226" width="200" height="76" rx="20" fill="#ef7d5e"/>
+              <text x="858" y="257" text-anchor="middle" fill="#fff8ec" font-weight="700">Cloud Storage</text>
+              <text x="858" y="278" text-anchor="middle" fill="#5c2413" font-size="11.5">transcript · cost log</text>
+            </g>
+
+            <!-- vertex note -->
+            <text x="500" y="382" text-anchor="middle" class="font-mono" font-size="11" fill="#8b8577">model calls go straight to Vertex AI via the job's service account — never through the proxy</text>
+          </svg>
+        </div>
+
+        <div class="mt-10 grid gap-6 md:grid-cols-3">
+          <div class="reveal">
+            <h3 class="font-display text-xl font-bold text-navy-deep">One task-agnostic image</h3>
+            <p class="mt-2 text-[15px] leading-relaxed text-ink/75"><span class="font-mono text-sm">LOOP=&lt;name&gt;</span> selects the spec. Adding a new <em>kind</em> of loop never touches the runner — it's just a new folder.</p>
+          </div>
+          <div class="reveal" style="--rd:100ms">
+            <h3 class="font-display text-xl font-bold text-navy-deep">Specs read at runtime</h3>
+            <p class="mt-2 text-[15px] leading-relaxed text-ink/75">Model, turn cap, prompt, verifier, push mode — all read from <span class="font-mono text-sm">loop.yaml</span> in the fresh clone. Editing a loop needs no rebuild.</p>
+          </div>
+          <div class="reveal" style="--rd:200ms">
+            <h3 class="font-display text-xl font-bold text-navy-deep">The agent never holds a key</h3>
+            <p class="mt-2 text-[15px] leading-relaxed text-ink/75">Declared <span class="font-mono text-sm">connectors:</span> get credentials injected by the proxy, outside the sandbox. Least privilege by construction.</p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ============================== ANATOMY ============================== -->
+    <section id="anatomy" class="relative scroll-mt-28 px-4 py-20 sm:px-6 sm:py-28">
+      <div aria-hidden="true" class="pointer-events-none absolute -left-24 top-32 h-72 w-72 rounded-full bg-lav/25 blur-3xl"></div>
+      <div class="mx-auto max-w-6xl">
+        <div class="max-w-2xl">
+          <p class="reveal font-mono text-xs font-semibold uppercase tracking-[0.22em] text-clay-deep">anatomy of a loop</p>
+          <h2 class="reveal mt-3 font-display text-4xl font-extrabold tracking-tight text-navy-deep sm:text-5xl" style="--rd:80ms">A loop is a folder.<br />Four files. That's it.</h2>
+          <p class="reveal mt-4 text-lg text-ink/75" style="--rd:160ms"><span class="font-mono text-base">./new-loop.sh my-loop</span> scaffolds it — or let the <span class="font-mono text-base">/loop-new</span> skill interview you and fill in the decisions.</p>
+        </div>
+
+        <div class="mt-12 grid items-start gap-6 lg:grid-cols-[0.9fr_1.1fr]">
+          <!-- file tree -->
+          <div class="reveal clay p-6 sm:p-8">
+            <p class="mb-4 font-mono text-[11px] uppercase tracking-widest text-ink/45">the whole surface area</p>
+            <pre class="overflow-x-auto font-mono text-[13px] leading-7 text-navy-deep"><code>loops/nightly-refactor/
+├── <span class="font-bold text-clay-deep">loop.yaml</span>   <span class="text-ink/45">← the spec</span>
+├── <span class="font-bold text-coral-deep">prompt.md</span>   <span class="text-ink/45">← the brief</span>
+├── <span class="font-bold text-sage-deep">verify.sh</span>   <span class="text-ink/45">← exit 0 = pass</span>
+├── agents/
+│   └── verifier.md <span class="text-ink/45">← independent judge</span>
+└── <span class="font-bold text-lav-deep">state/</span>      <span class="text-ink/45">← git-backed memory</span></code></pre>
+            <div class="mt-6 border-t-2 border-dashed border-bone-deep pt-5">
+              <p class="mb-3 font-mono text-[11px] uppercase tracking-widest text-ink/45">push modes — pick the blast radius</p>
+              <div class="flex flex-wrap gap-2.5">
+                <span class="clay-chip bg-sage px-3.5 py-1.5 font-mono text-xs font-semibold text-navy-deep">push: main · the loop ships</span>
+                <span class="clay-chip bg-lav px-3.5 py-1.5 font-mono text-xs font-semibold text-navy-deep">push: pr · the loop proposes</span>
+                <span class="clay-chip bg-cream px-3.5 py-1.5 font-mono text-xs font-semibold text-navy">push: none · read-only</span>
+              </div>
+            </div>
+          </div>
+
+          <!-- loop.yaml -->
+          <div class="reveal clay-navy p-6 sm:p-8" style="--rd:120ms">
+            <div class="mb-4 flex items-center justify-between">
+              <span class="font-mono text-[11px] uppercase tracking-widest text-cream/50">loops/nightly-refactor/loop.yaml</span>
+              <span class="clay-chip bg-led/90 px-3 py-1 font-mono text-[10px] font-bold uppercase tracking-wider text-navy-deep">no rebuild needed</span>
+            </div>
+            <pre class="overflow-x-auto font-mono text-[12.5px] leading-6 text-cream/90 sm:text-[13px]"><code><span class="text-lav-soft">name:</span> nightly-refactor
+<span class="text-lav-soft">trigger:</span> schedule
+<span class="text-lav-soft">schedule:</span> <span class="text-sage">"0 3 * * *"</span>       <span class="text-cream/35"># while you sleep</span>
+
+<span class="text-lav-soft">model:</span> claude-sonnet-4-6
+<span class="text-lav-soft">max_turns:</span> <span class="text-coral">40</span>              <span class="text-cream/35"># STOP: turn cap</span>
+<span class="text-lav-soft">budget_usd:</span> <span class="text-coral">3</span>              <span class="text-cream/35"># STOP: cost cap</span>
+
+<span class="text-lav-soft">repo:</span> your-org/your-app     <span class="text-cream/35"># Two-Repo Mode: PRs land there</span>
+<span class="text-lav-soft">prompt:</span> loops/nightly-refactor/prompt.md
+<span class="text-lav-soft">verify:</span> loops/nightly-refactor/verify.sh
+<span class="text-lav-soft">connectors:</span> []              <span class="text-cream/35"># least privilege</span>
+<span class="text-lav-soft">memory:</span> loops/nightly-refactor/state
+<span class="text-lav-soft">push:</span> <span class="text-sage">pr</span>                    <span class="text-cream/35"># propose, never land</span>
+<span class="text-lav-soft">tier:</span> <span class="text-sage">"3 · ground-truth"</span>    <span class="text-cream/35"># be honest</span></code></pre>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ============================== LOOP GALLERY ============================== -->
+    <section id="loops" class="relative scroll-mt-28 px-4 py-20 sm:px-6 sm:py-28">
+      <div class="mx-auto max-w-6xl">
+        <div class="max-w-2xl">
+          <p class="reveal font-mono text-xs font-semibold uppercase tracking-[0.22em] text-clay-deep">the library</p>
+          <h2 class="reveal mt-3 font-display text-4xl font-extrabold tracking-tight text-navy-deep sm:text-5xl" style="--rd:80ms">Loops that already run.</h2>
+        </div>
+
+        <div class="mt-12 grid gap-6 md:grid-cols-3">
+          <article class="reveal clay flex flex-col p-7">
+            <div class="flex items-center justify-between">
+              <h3 class="font-mono text-lg font-bold text-navy-deep">hello-world</h3>
+              <span class="clay-chip bg-sage px-3 py-1 font-mono text-[10px] font-bold uppercase tracking-wider text-navy-deep">tier 3</span>
+            </div>
+            <p class="mt-3 flex-1 text-[15px] leading-relaxed text-ink/75">The canary. Appends one timestamped greeting to its own state file — and proves the whole spine: clone → model → task → verify → commit → push.</p>
+            <div class="mt-5 flex flex-wrap gap-2 font-mono text-[11px] text-ink/60">
+              <span class="rounded-full bg-bone px-3 py-1">push: main</span>
+              <span class="rounded-full bg-bone px-3 py-1">connectors: []</span>
+              <span class="rounded-full bg-bone px-3 py-1">6 turns · $1</span>
+            </div>
+          </article>
+          <article class="reveal clay flex flex-col p-7" style="--rd:100ms">
+            <div class="flex items-center justify-between">
+              <h3 class="font-mono text-lg font-bold text-navy-deep">auto-fix</h3>
+              <span class="clay-chip bg-sage px-3 py-1 font-mono text-[10px] font-bold uppercase tracking-wider text-navy-deep">tier 3</span>
+            </div>
+            <p class="mt-3 flex-1 text-[15px] leading-relaxed text-ink/75">Finds the failing test in a work repo, fixes the root cause in the source — never the test — proves <span class="font-mono text-sm">npm test</span> green, and opens the PR.</p>
+            <div class="mt-5 flex flex-wrap gap-2 font-mono text-[11px] text-ink/60">
+              <span class="rounded-full bg-bone px-3 py-1">push: pr</span>
+              <span class="rounded-full bg-bone px-3 py-1">two-repo mode</span>
+              <span class="rounded-full bg-bone px-3 py-1">50 turns · $5</span>
+            </div>
+          </article>
+          <article class="reveal flex flex-col rounded-[1.75rem] border-[3px] border-dashed border-clay/50 bg-cream/40 p-7" style="--rd:200ms">
+            <div class="flex items-center justify-between">
+              <h3 class="font-mono text-lg font-bold text-clay-deep">your-loop</h3>
+              <span class="rounded-full border-2 border-dashed border-clay/50 px-3 py-1 font-mono text-[10px] font-bold uppercase tracking-wider text-clay-deep">tier ?</span>
+            </div>
+            <p class="mt-3 flex-1 text-[15px] leading-relaxed text-ink/75">A ticket triager. An error sweep. A Slack-digest bot. An engineer that drains a backlog overnight. Any workflow with a real check and a stopping condition.</p>
+            <code class="mt-5 block rounded-2xl bg-navy-deep px-4 py-3 font-mono text-[12.5px] text-cream/95">./new-loop.sh my-loop</code>
+          </article>
+        </div>
+
+        <!-- honest boundaries -->
+        <div class="reveal clay-navy mt-14 p-8 sm:p-10" style="--rd:120ms">
+          <div class="grid gap-8 md:grid-cols-[auto_1fr] md:items-start">
+            <span class="clay-chip inline-block bg-coral px-4 py-1.5 font-mono text-[11px] font-bold uppercase tracking-[0.18em] text-white">honest boundaries</span>
+            <ul class="space-y-3 text-[15px] leading-relaxed text-cream/85">
+              <li class="flex gap-3"><span class="mt-1 shrink-0 text-sage" aria-hidden="true">▸</span><span>Runs on <strong class="text-cream">Google Cloud</strong> (Cloud Run Jobs + Scheduler) with <strong class="text-cream">Claude on Vertex AI</strong>. That's the supported runtime today — it isn't cloud-agnostic yet.</span></li>
+              <li class="flex gap-3"><span class="mt-1 shrink-0 text-sage" aria-hidden="true">▸</span><span>A fresh GCP project enables the Claude models in Vertex Model Garden once (accept the EULA).</span></li>
+              <li class="flex gap-3"><span class="mt-1 shrink-0 text-sage" aria-hidden="true">▸</span><span>Verifier tiers are declared honestly per loop — a check that reads back ground truth beats a model grading its own work. Say which one you have.</span></li>
+            </ul>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ============================== FINAL CTA ============================== -->
+    <section class="relative overflow-hidden px-4 pb-24 pt-8 sm:px-6">
+      <div class="mx-auto max-w-6xl">
+        <div class="reveal clay relative overflow-hidden p-8 text-center sm:p-14">
+          <div aria-hidden="true" class="pointer-events-none absolute -left-20 -top-20 h-56 w-56 rounded-full bg-lav/30 blur-2xl"></div>
+          <div aria-hidden="true" class="pointer-events-none absolute -bottom-24 -right-16 h-64 w-64 rounded-full bg-coral/25 blur-2xl"></div>
+
+          <svg viewBox="0 0 200 140" class="mx-auto mb-2 w-36 bob" aria-hidden="true">
+            <ellipse cx="100" cy="130" rx="50" ry="7" fill="#46321e" opacity="0.14"/>
+            <path d="M100 22 C 130 22 148 44 150 74 C 152 102 144 120 100 120 C 56 120 48 102 50 74 C 52 44 70 22 100 22 Z" fill="url(#clayGrad)"/>
+            <ellipse cx="84" cy="38" rx="16" ry="7" fill="#ffffff" opacity="0.22" transform="rotate(-14 84 38)"/>
+            <circle cx="76" cy="74" r="7" fill="#b5a7e2"/><circle cx="124" cy="74" r="7" fill="#b5a7e2"/>
+            <circle cx="87" cy="61" r="5" fill="#33302b" class="blink"/><circle cx="113" cy="61" r="5" fill="#33302b" class="blink"/>
+            <path d="M92 70 Q 100 78 108 70" fill="none" stroke="#33302b" stroke-width="3.5" stroke-linecap="round"/>
+            <path d="M60 48 C 68 12 132 12 140 48" fill="none" stroke="#9cb89b" stroke-width="12" stroke-linecap="round"/>
+            <ellipse cx="57" cy="58" rx="12" ry="17" fill="#9cb89b" transform="rotate(-8 57 58)"/>
+            <ellipse cx="57" cy="58" rx="6" ry="10" fill="#7fa381" transform="rotate(-8 57 58)"/>
+            <ellipse cx="143" cy="58" rx="12" ry="17" fill="#9cb89b" transform="rotate(8 143 58)"/>
+            <ellipse cx="143" cy="58" rx="6" ry="10" fill="#7fa381" transform="rotate(8 143 58)"/>
+            <circle cx="100" cy="100" r="9" fill="#7fa381"/>
+            <circle cx="100" cy="100" r="5" fill="var(--color-led)" class="led-pulse"/>
+          </svg>
+
+          <h2 class="font-display text-4xl font-extrabold tracking-tight text-navy-deep sm:text-5xl">Give your agent<br class="sm:hidden" /> a night shift.</h2>
+          <p class="mx-auto mt-4 max-w-lg text-lg text-ink/75">Install the skill, deploy the canary, and wake up to commits the agent couldn't forget to make.</p>
+
+          <div class="mx-auto mt-8 flex max-w-xl items-center gap-3 rounded-full bg-navy-deep py-3 pl-6 pr-3">
+            <span aria-hidden="true" class="font-mono text-sm font-bold text-coral">$</span>
+            <code class="min-w-0 flex-1 overflow-x-auto whitespace-nowrap text-left font-mono text-[13px] font-semibold text-cream sm:text-sm">npx skills add SaschaHeyer/loop-runner</code>
+            <button type="button" data-copy="npx skills add SaschaHeyer/loop-runner" class="btn-clay shrink-0 bg-coral px-4 py-2 text-sm text-white" aria-label="Copy install command">copy</button>
+          </div>
+          <div class="mt-6">
+            <a href="https://github.com/SaschaHeyer/loop-runner" class="btn-clay inline-flex items-center gap-2 bg-navy px-6 py-3 text-cream">
+              <svg viewBox="0 0 16 16" class="h-4 w-4 fill-current" aria-hidden="true"><path d="M8 0C3.58 0 0 3.58 0 8c0 3.54 2.29 6.53 5.47 7.59.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82.64-.18 1.32-.27 2-.27s1.36.09 2 .27c1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A8.01 8.01 0 0 0 16 8c0-4.42-3.58-8-8-8Z"/></svg>
+              Star it on GitHub
+            </a>
+          </div>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <!-- ============================== FOOTER ============================== -->
+  <footer class="border-t-2 border-bone-deep px-4 py-10 sm:px-6">
+    <div class="mx-auto flex max-w-6xl flex-col items-center justify-between gap-4 text-center sm:flex-row sm:text-left">
+      <p class="font-mono text-xs text-ink/55">Loop Runner · Apache-2.0 · TRIGGER → EXECUTE → VERIFY → RECORD → STOP</p>
+      <div class="flex items-center gap-5 font-mono text-xs">
+        <a href="https://github.com/SaschaHeyer/loop-runner" class="text-navy underline decoration-lav underline-offset-4 hover:decoration-coral">github</a>
+        <a href="https://github.com/SaschaHeyer/loop-runner/blob/main/loop-runner/get-started.md" class="text-navy underline decoration-lav underline-offset-4 hover:decoration-coral">get-started</a>
+        <a href="https://github.com/SaschaHeyer/loop-runner/blob/main/docs/proxy.md" class="text-navy underline decoration-lav underline-offset-4 hover:decoration-coral">connectors</a>
+        <a href="https://github.com/SaschaHeyer/loop-runner/blob/main/docs/browser.md" class="text-navy underline decoration-lav underline-offset-4 hover:decoration-coral">browser</a>
+      </div>
+      <p class="font-mono text-xs text-ink/55">sculpted with Claude Code ✦</p>
+    </div>
+  </footer>
+
+  <script src="main.js" defer></script>
+</body>
+</html>
