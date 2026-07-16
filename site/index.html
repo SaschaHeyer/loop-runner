@@ -16,6 +16,14 @@
 </head>
 <body class="antialiased">
 
+  <svg width="0" height="0" class="absolute" aria-hidden="true" focusable="false">
+    <defs>
+      <radialGradient id="clayGrad" cx="0.38" cy="0.26" r="0.95">
+        <stop offset="0" stop-color="#d18a6b"/><stop offset=".55" stop-color="#b96a50"/><stop offset="1" stop-color="#9d5540"/>
+      </radialGradient>
+    </defs>
+  </svg>
+
   <!-- ============================== NAV ============================== -->
   <header class="fixed inset-x-0 top-3 z-50 px-3 sm:top-5 sm:px-6">
     <nav id="nav" class="clay mx-auto flex max-w-6xl items-center justify-between gap-3 px-4 py-2.5 transition-shadow sm:px-6" aria-label="Main">
@@ -197,108 +205,6 @@
           </div>
         </div>
 
-        <!-- the workshop stage -->
-        <div class="reveal mx-auto mt-16 max-w-[500px]" style="--rd:120ms">
-          <svg viewBox="0 0 640 640" class="mx-auto w-full max-w-[520px]" role="img" aria-label="A round clay mascot wearing sage headphones holds a loop spec card with a glowing green status light, on a small stage beside a sprouting vine.">
-            <defs>
-              <linearGradient id="curtainGrad" x1="0" y1="0" x2="0" y2="1">
-                <stop offset="0" stop-color="#36456f"/><stop offset=".55" stop-color="#2a3760"/><stop offset="1" stop-color="#1f2947"/>
-              </linearGradient>
-              <radialGradient id="clayGrad" cx="0.38" cy="0.26" r="0.95">
-                <stop offset="0" stop-color="#d18a6b"/><stop offset=".55" stop-color="#b96a50"/><stop offset="1" stop-color="#9d5540"/>
-              </radialGradient>
-              <linearGradient id="cardGrad" x1="0" y1="0" x2="0.3" y2="1">
-                <stop offset="0" stop-color="#fdf8ec"/><stop offset="1" stop-color="#f0e5cd"/>
-              </linearGradient>
-              <filter id="soften" x="-60%" y="-60%" width="220%" height="220%"><feGaussianBlur stdDeviation="7"/></filter>
-              <filter id="cardShadow" x="-40%" y="-40%" width="180%" height="180%">
-                <feDropShadow dx="0" dy="7" stdDeviation="7" flood-color="#46321e" flood-opacity="0.28"/>
-              </filter>
-            </defs>
-
-            <!-- curtain -->
-            <g>
-              <path d="M-30 -30 L330 -30 L330 368 Q 312 412 285 370 Q 266 418 234 372 Q 213 420 180 370 Q 158 415 126 369 Q 104 414 70 368 Q 48 412 14 366 Q -6 400 -30 364 Z" fill="url(#curtainGrad)"/>
-              <g stroke="#1c2540" stroke-width="11" stroke-linecap="round" opacity="0.45" fill="none">
-                <path d="M52 -20 C 46 120, 58 260, 50 352"/>
-                <path d="M118 -20 C 112 130, 124 250, 116 356"/>
-                <path d="M186 -20 C 180 120, 192 265, 184 354"/>
-                <path d="M254 -20 C 248 125, 260 255, 252 356"/>
-              </g>
-              <g stroke="#4a5a8b" stroke-width="5" stroke-linecap="round" opacity="0.35" fill="none">
-                <path d="M84 -20 C 80 130, 90 260, 84 348"/>
-                <path d="M152 -20 C 148 135, 158 250, 152 350"/>
-                <path d="M220 -20 C 216 125, 226 260, 220 350"/>
-                <path d="M288 -20 C 284 130, 294 250, 288 352"/>
-              </g>
-            </g>
-
-            <!-- stage floor -->
-            <ellipse cx="315" cy="560" rx="295" ry="56" fill="var(--color-bone-deep)"/>
-            <ellipse cx="315" cy="556" rx="295" ry="54" fill="#efe6d0"/>
-
-            <!-- ground shadows -->
-            <ellipse cx="250" cy="549" rx="122" ry="18" fill="#46321e" opacity="0.16" filter="url(#soften)"/>
-            <ellipse cx="462" cy="551" rx="56" ry="10" fill="#46321e" opacity="0.13" filter="url(#soften)"/>
-
-            <!-- sprout -->
-            <g class="sway">
-              <path d="M456 548 C 474 500, 432 468, 452 428 C 470 396, 442 384, 448 362" fill="none" stroke="#8fae8e" stroke-width="11" stroke-linecap="round"/>
-              <path d="M448 548 C 428 505, 472 470, 448 434 C 432 404, 460 390, 450 366" fill="none" stroke="#afa3df" stroke-width="9" stroke-linecap="round" opacity="0.95"/>
-              <ellipse cx="420" cy="398" rx="24" ry="11" fill="#afa3df" transform="rotate(-38 420 398)"/>
-              <ellipse cx="482" cy="424" rx="21" ry="10" fill="#9184c9" transform="rotate(24 482 424)"/>
-              <ellipse cx="424" cy="466" rx="20" ry="9" fill="#8fae8e" transform="rotate(-22 424 466)"/>
-              <ellipse cx="436" cy="352" rx="19" ry="9" fill="#cfc6ec" transform="rotate(-58 436 352)"/>
-              <ellipse cx="466" cy="350" rx="19" ry="9" fill="#9cb89b" transform="rotate(42 466 350)"/>
-              <circle cx="452" cy="470" r="11" fill="#7fa381"/>
-              <circle cx="452" cy="470" r="6" fill="var(--color-led)" class="led-pulse"/>
-            </g>
-
-            <!-- mascot -->
-            <g class="bob">
-              <!-- feet -->
-              <ellipse cx="212" cy="514" rx="27" ry="15" fill="#a55b44"/>
-              <ellipse cx="290" cy="514" rx="27" ry="15" fill="#a55b44"/>
-              <!-- body -->
-              <path d="M250 262 C 306 262 338 300 342 356 C 346 416 352 462 344 483 C 335 505 301 510 250 510 C 199 510 165 505 156 483 C 148 462 154 416 158 356 C 162 300 194 262 250 262 Z" fill="url(#clayGrad)"/>
-              <!-- head shine -->
-              <ellipse cx="220" cy="292" rx="30" ry="14" fill="#ffffff" opacity="0.22" transform="rotate(-16 220 292)"/>
-              <!-- cheeks -->
-              <circle cx="196" cy="354" r="13" fill="#b5a7e2"/>
-              <circle cx="304" cy="354" r="13" fill="#b5a7e2"/>
-              <!-- eyes -->
-              <circle cx="218" cy="331" r="8.5" fill="#33302b" class="blink"/>
-              <circle cx="282" cy="331" r="8.5" fill="#33302b" class="blink"/>
-              <!-- smile -->
-              <path d="M236 346 Q 250 358 264 346" fill="none" stroke="#33302b" stroke-width="5.5" stroke-linecap="round"/>
-              <!-- headphones -->
-              <path d="M176 302 C 188 232 312 232 324 302" fill="none" stroke="#9cb89b" stroke-width="21" stroke-linecap="round"/>
-              <path d="M182 296 C 196 240 304 240 318 296" fill="none" stroke="#b7ccb4" stroke-width="6" stroke-linecap="round" opacity="0.7"/>
-              <ellipse cx="171" cy="322" rx="23" ry="31" fill="#9cb89b" transform="rotate(-9 171 322)"/>
-              <ellipse cx="171" cy="322" rx="12" ry="19" fill="#7fa381" transform="rotate(-9 171 322)"/>
-              <ellipse cx="329" cy="322" rx="23" ry="31" fill="#9cb89b" transform="rotate(9 329 322)"/>
-              <ellipse cx="329" cy="322" rx="12" ry="19" fill="#7fa381" transform="rotate(9 329 322)"/>
-              <!-- coral belly peeking behind the card -->
-              <circle cx="250" cy="436" r="60" fill="#ef7d5e"/>
-              <!-- spec card -->
-              <g transform="rotate(-6 250 445)" filter="url(#cardShadow)">
-                <rect x="194" y="382" width="120" height="144" rx="17" fill="url(#cardGrad)"/>
-                <circle cx="222" cy="410" r="14" fill="#7fa381"/>
-                <circle cx="222" cy="410" r="7.5" fill="var(--color-led)" class="led-pulse"/>
-                <path d="M251 400 l 21 12 l -21 12 Z" fill="#9184c9"/>
-                <path d="M272 400 l 21 12 l -21 12 Z" fill="#afa3df"/>
-                <rect x="212" y="450" width="86" height="13" rx="6.5" fill="#afa3df"/>
-                <rect x="212" y="473" width="86" height="13" rx="6.5" fill="#bfb4e6"/>
-                <rect x="212" y="496" width="58" height="13" rx="6.5" fill="#cfc6ec"/>
-              </g>
-              <!-- arms hugging the card -->
-              <path d="M166 390 C 156 432 170 458 202 462" fill="none" stroke="#b0604a" stroke-width="29" stroke-linecap="round"/>
-              <path d="M334 390 C 344 432 330 458 298 462" fill="none" stroke="#b0604a" stroke-width="29" stroke-linecap="round"/>
-              <circle cx="204" cy="463" r="16" fill="#c1795d"/>
-              <circle cx="296" cy="463" r="16" fill="#c1795d"/>
-            </g>
-          </svg>
-        </div>
       </div>
     </section>
 
