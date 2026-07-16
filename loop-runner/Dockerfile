@@ -26,6 +26,26 @@ RUN curl -fsSL https://cli.github.com/packages/githubcli-archive-keyring.gpg \
 # Agent CLIs.
 #   Claude Code (default maker; runs on Vertex via CLAUDE_CODE_USE_VERTEX=1).
 RUN npm install -g @anthropic-ai/claude-code@latest firebase-tools@latest
+
+# Headless browser support (for loops that must drive a real browser, e.g. a verifier walking the
+# deployed UI instead of curling the API). Chromium from Debian + Google's chrome-devtools MCP server,
+# which exposes navigate/click/fill/screenshot tools. entrypoint.sh registers the MCP server per-run
+# (see §3c) so a loop or sub-agent that lists chrome-devtools in its tools gets a real browser.
+RUN apt-get update && apt-get install -y --no-install-recommends \
+      chromium fonts-liberation fonts-noto-color-emoji \
+    && rm -rf /var/lib/apt/lists/*
+# Container runs as root and has no /dev/shm to speak of; wrap chromium so every launch is headless,
+# sandbox-off, and shm-disabled. chrome-devtools-mcp points at this wrapper via --executablePath.
+# --ignore-certificate-errors: the run's mitmproxy intercepts HTTPS, but Chromium trusts its own cert
+# store, not the system one where the proxy CA is installed — so it would reject every intercepted cert.
+# Acceptable here: the browser only ever hits throwaway test previews, never anything sensitive.
+RUN printf '#!/bin/sh\nexec /usr/bin/chromium --no-sandbox --disable-gpu --disable-dev-shm-usage --headless=new --ignore-certificate-errors "$@"\n' \
+      > /usr/local/bin/chromium-headless \
+    && chmod +x /usr/local/bin/chromium-headless
+ENV CHROME_BIN=/usr/local/bin/chromium-headless \
+    PUPPETEER_SKIP_DOWNLOAD=1 \
+    PUPPETEER_EXECUTABLE_PATH=/usr/local/bin/chromium-headless
+RUN npm install -g chrome-devtools-mcp@latest
 #   Antigravity CLI (`agy`) — OPTIONAL alternative backend. Install per the official method at
 #   https://github.com/google-antigravity/antigravity-cli, then set AGENT_CLI=agy on the Job.
 #   (Left commented so the build doesn't depend on an unverified install command.)

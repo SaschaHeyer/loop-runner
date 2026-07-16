@@ -206,9 +206,34 @@ if [ -d "${REPO_DIR}/loops/${LOOP}/agents" ]; then
 fi
 log "agents: registered ${agent_count} subagent(s) under .claude/agents/"
 
+# ---------- 3c. register the chrome-devtools MCP server IF this loop drives a browser ----------
+# A loop opts in with zero config: just list `chrome-devtools` in allowed_tools or in a sub-agent's
+# tools:. The MCP server (chrome-devtools-mcp, installed in the image) exposes navigate/click/fill/
+# screenshot; Chrome only launches on first tool use, so registering it is cheap for loops that never
+# call it. We write .claude/mcp.json and pass it via --mcp-config at invocation (§6). MCP_CONFIG stays
+# empty for non-browser loops, so their invocation is byte-identical to before.
+MCP_CONFIG=""
+if grep -rqs "chrome-devtools" "${REPO_DIR}/loops/${LOOP}" 2>/dev/null \
+   || printf '%s' "${ALLOWED_TOOLS}" | grep -q "chrome-devtools"; then
+  MCP_CONFIG="${WORK_DIR}/.claude/mcp.json"
+  cat > "${MCP_CONFIG}" <<'MCPJSON'
+{
+  "mcpServers": {
+    "chrome-devtools": {
+      "command": "chrome-devtools-mcp",
+      "args": ["--headless", "--isolated", "--executablePath", "/usr/local/bin/chromium-headless"]
+    }
+  }
+}
+MCPJSON
+  # Allow the whole server's tools for the main agent; sub-agents still gate via their own tools:.
+  ALLOWED_TOOLS="${ALLOWED_TOOLS},mcp__chrome-devtools"
+  log "mcp: registered chrome-devtools server (this loop drives a browser)"
+fi
+
 # The runtime-injected config is the RUNNER's, not the work repo's — never commit it. Exclude it in
 # WORK_DIR (where it lives). In single-repo mode WORK_DIR==REPO_DIR, so this is today's behavior.
-for p in '.claude/settings.local.json' '.claude/skills/' '.claude/agents/'; do
+for p in '.claude/settings.local.json' '.claude/skills/' '.claude/agents/' '.claude/mcp.json'; do
   grep -qxF "$p" "${WORK_DIR}/.git/info/exclude" 2>/dev/null || echo "$p" >> "${WORK_DIR}/.git/info/exclude"
 done
 
@@ -257,6 +282,8 @@ SYS_ARG=(); ADD_DIR_ARGS=()
 for d in "${SKILL_DIRS[@]+"${SKILL_DIRS[@]}"}"; do ADD_DIR_ARGS+=(--add-dir "$d"); done
 # Commons dirs are mounted read/WRITE (the loop appends learnings there); §7 pushes them back.
 for d in "${SHARED_DIRS[@]+"${SHARED_DIRS[@]}"}"; do ADD_DIR_ARGS+=(--add-dir "$d"); done
+# MCP config (§3c): only non-empty for a browser loop, so non-browser invocations are unchanged.
+MCP_ARGS=(); [ -n "${MCP_CONFIG:-}" ] && MCP_ARGS=(--mcp-config "${MCP_CONFIG}")
 
 if [ "${SMOKE:-0}" = "1" ]; then
   log "SMOKE MODE: harness validation only (no loop actions)"
@@ -301,7 +328,7 @@ case "${AGENT_CLI}" in
       claude --print --output-format stream-json --verbose \
         --model "${MODEL}" --allowedTools "${ALLOWED_TOOLS}" --max-turns "${MAX_TURNS}" \
         ${MAKER_SESSION_ID:+--session-id "${MAKER_SESSION_ID}"} \
-        "${SYS_ARG[@]+"${SYS_ARG[@]}"}" "${ADD_DIR_ARGS[@]+"${ADD_DIR_ARGS[@]}"}" \
+        "${SYS_ARG[@]+"${SYS_ARG[@]}"}" "${ADD_DIR_ARGS[@]+"${ADD_DIR_ARGS[@]}"}" "${MCP_ARGS[@]+"${MCP_ARGS[@]}"}" \
         -p "${KICKOFF}" 2>/tmp/agent.err \
         | LOOP="${LOOP}" EXEC_ID="${CLOUD_RUN_EXECUTION:-${TS}}" python3 /harness/stream_steps.py "${RESULT}"
       AGENT_RC=${PIPESTATUS[0]}
@@ -311,7 +338,7 @@ case "${AGENT_CLI}" in
         --allowedTools "${ALLOWED_TOOLS}" \
         --max-turns "${MAX_TURNS}" \
         ${MAKER_SESSION_ID:+--session-id "${MAKER_SESSION_ID}"} \
-        "${SYS_ARG[@]+"${SYS_ARG[@]}"}" "${ADD_DIR_ARGS[@]+"${ADD_DIR_ARGS[@]}"}" \
+        "${SYS_ARG[@]+"${SYS_ARG[@]}"}" "${ADD_DIR_ARGS[@]+"${ADD_DIR_ARGS[@]}"}" "${MCP_ARGS[@]+"${MCP_ARGS[@]}"}" \
         -p "${KICKOFF}" >"${RESULT}" 2>/tmp/agent.err || AGENT_RC=$?
     fi
     ;;
