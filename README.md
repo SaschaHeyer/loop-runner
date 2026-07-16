@@ -135,10 +135,9 @@ loops/
   hello-world/   a runnable canary loop
   auto-fix/      bug-fix loop — failing test → root-cause fix → PR (Two-Repo Mode)
   issue-fix/     the GitHub issue-fixer — label an issue `agent-ready`, wake up to a PR
-skills/
-  loop-new/      interview-driven authoring skill for new loops
 .claude/skills/
-  loop-runner/   the installable operator skill — npx skills add SaschaHeyer/loop-runner
+  loop-runner/   the full-lifecycle skill (setup → author → deploy → costs → query runs)
+                 — installable via: npx skills add SaschaHeyer/loop-runner
 site/            the landing page (claymation, Tailwind) — see site/README.md
 ```
 
