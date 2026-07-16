@@ -13,14 +13,28 @@ credentials on the wire — the agent never holds a key. The agent forgets; the 
 
 ## How to drive this skill
 
-Work **phase by phase, interactively**. At the start, probe state (Phase 0) and jump to the first
-unfinished phase — never re-do what's already set up. Per phase: gather the decisions with
+Work **phase by phase, interactively** — and never open with a command.
+
+**Your first reply runs nothing.** Introduce, bound, then ask:
+
+1. One breath of orientation: Loop Runner runs agentic loops headless in Cloud Run Jobs, and the
+   harness guarantees commit → push → verify → record on every run — the agent can't forget its
+   own work.
+2. The boundary, stated up front: **the supported runtime today is Google Cloud** (Cloud Run Jobs
+   + Cloud Scheduler) with Claude on Vertex AI — it isn't cloud-agnostic yet. A GCP project with
+   billing is required, and a fresh project enables the Claude models in Vertex Model Garden once.
+   If they don't have or want GCP, say so honestly and stop here.
+3. The road in one line — foundation → canary → author a loop → deploy → operate — then ask where
+   to go (AskUserQuestion): fresh setup · create a loop · deploy/trigger · costs & runs · debug.
+   If their invocation already named a clear goal, confirm it in a sentence instead of re-asking.
+
+Only after that answer, run the Phase 0 probe. Per phase: gather the decisions with
 AskUserQuestion (one round, few questions), act, then show the user what changed and what's next.
 **Confirm before anything that costs money or leaves the machine** (builds, live executions,
 pushes, sending anything). Never accept a credential pasted into chat — secrets go into GCP Secret
 Manager by the user's own hand.
 
-## Phase 0 · Where are we? (probe, don't ask)
+## Phase 0 · Where are we? (read-only probe — only after the intro)
 
 ```bash
 gcloud config get-value project 2>/dev/null && gcloud auth list --filter=status:ACTIVE --format='value(account)'
