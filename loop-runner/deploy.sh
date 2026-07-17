@@ -79,18 +79,27 @@ echo ">> loop=${LOOP} model=${LOOP_MODEL:-?} trigger=${LOOP_TRIGGER:-?} project=
 # the registry is a hard error (fail fast, don't silently deploy without its credential). The secret
 # must exist in THIS project (${PROJECT}) — an isolated CEO has only what it owns.
 REGISTRY="$(dirname "$0")/connectors/registry.json"
+# A loop may declare its OWN connectors in loops/<name>/connectors.json (in the loops repo), merged over
+# the generic engine registry below. This keeps loop-specific connector names out of this task-agnostic
+# engine repo -- a loop that talks to some product defines that connector alongside its own spec.
+LOOP_REGISTRY="${LOOPS_ROOT}/loops/${LOOP}/connectors.json"
 SECRETS="GITHUB_PAT=github-pat:latest"
 for c in ${LOOP_CONNECTORS:-}; do
   case "$c" in
     gcp|github) continue ;;   # gcp = SA native (no secret); github = always injected above
   esac
-  # Look up env + secret for connector $c in the registry (empty line if unknown).
-  frag="$(python3 -c "import json,sys
-c=json.load(open('${REGISTRY}')).get('$c')
+  # Look up env + secret for connector $c in the engine registry, then the per-loop one (per-loop wins).
+  frag="$(python3 -c "import json,os
+reg={}
+for p in ['${REGISTRY}', '${LOOP_REGISTRY}']:
+    if os.path.exists(p):
+        try: reg.update({k:v for k,v in json.load(open(p)).items() if not k.startswith('_')})
+        except Exception: pass
+c=reg.get('$c')
 print(f\"{c['env']}={c['secret']}:latest\" if isinstance(c,dict) and c.get('env') and c.get('secret') else '')" 2>/dev/null)"
   if [ -z "${frag}" ]; then
-    echo "ERROR: connector '$c' is declared by loop '${LOOP}' but not defined in ${REGISTRY}" >&2
-    echo "       add an entry (domain/secret/env/header) there, or remove it from the loop's connectors:." >&2
+    echo "ERROR: connector '$c' is declared by loop '${LOOP}' but not defined in ${REGISTRY} or ${LOOP_REGISTRY}" >&2
+    echo "       add an entry (secret/env, plus domain/header if proxy-injected) to loops/${LOOP}/connectors.json, or remove it from connectors:." >&2
     exit 1
   fi
   SECRETS="${SECRETS},${frag}"

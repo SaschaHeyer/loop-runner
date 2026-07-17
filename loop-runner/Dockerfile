@@ -55,7 +55,7 @@ ENV CHROME_BIN=/usr/local/bin/chromium-headless \
     PUPPETEER_EXECUTABLE_PATH=/usr/local/bin/chromium-headless
 RUN npm install -g chrome-devtools-mcp@latest puppeteer-core@latest
 # Make globally-installed modules (puppeteer-core) resolvable by loop helper scripts run from any cwd
-# (e.g. a loop's tools/*.js that drives Chromium with an injected session -- see zendesk_shot.js).
+# (e.g. a loop's tools/*.js that drives Chromium with an injected browser session for an authed walk).
 ENV NODE_PATH=/usr/local/lib/node_modules
 #   Antigravity CLI (`agy`) — OPTIONAL alternative backend. Install per the official method at
 #   https://github.com/google-antigravity/antigravity-cli, then set AGENT_CLI=agy on the Job.
