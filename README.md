@@ -79,6 +79,13 @@ flowchart TB
 
 - **Trigger → Job**: scheduled, event-driven, or manual — all land on the same `gcloud run jobs
   execute`. The image is task-agnostic; `LOOP=<name>` selects the spec.
+  - **Gotcha when loops chain via GitHub Actions** (`trigger: event`): GitHub does **not** start a new
+    workflow run from an event triggered by the built-in `GITHUB_TOKEN`. So if one Action hands off to
+    the next by applying a label (or merging a PR) *as `GITHUB_TOKEN`*, the downstream workflow silently
+    never fires — a stall that looks like success. Make each hand-off either (a) **fire the next Cloud
+    Run Job directly** (`gcloud run jobs execute`, via WIF — recursion-immune), or (b) **apply the
+    trigger-keyed label with a PAT or a GitHub App token**, never `GITHUB_TOKEN`. A `GITHUB_TOKEN` label
+    is safe only when nothing triggers on it.
 - **Model auth** goes straight to Vertex AI via the Job's service account (ADC), *not* through the
   proxy.
 - **Everything else** (Google APIs, GitHub, third-party APIs) goes through the local proxy, which
