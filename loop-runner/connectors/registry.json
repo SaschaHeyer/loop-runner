@@ -23,5 +23,10 @@
     "secret": "slack-bot-token",
     "env": "SLACK_BOT_TOKEN",
     "header": "Bearer {}"
+  },
+  "_env_only_note": "A connector with NO 'domain' is wired as an env var by deploy.sh but ignored by the proxy (proxy_addon.py only injects when 'domain' AND 'env' are set). Use this shape for a credential a loop's agent consumes directly (e.g. types into a browser form) rather than one the proxy injects into an Authorization header.",
+  "zendesk": {
+    "secret": "zendesk-creds",
+    "env": "ZENDESK_CREDS"
   }
 }
